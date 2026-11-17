@@ -1,0 +1,81 @@
+# Teslim doğrulaması — v0.2 · 16 Kasım 2026
+
+Bu teslim, v4 belgelerindeki (REQUIREMENTS, CONTENT-SPEC, GRAMMAR, SOURCES, REVIEW) v0.2 taahhüdünü uygular: dil bilgisi öğretimi ve konuşma desteği. v0.1 teslimi (48 alıştırma, 126 kart, 36 mikro ders) aynı kimliklerle korunur. Planlama hedefi 15 Ocak 2027; kesin sınav rezervasyonu değildir.
+
+## Otomatik doğrulama
+
+- `npm test`: **58 test, 58 başarılı** (v0.1'in 28 testi + v0.2 için 24 test + v0.2.1 için 6 test).
+- v0.2.1 (16 Kasım 2026): kayıtlı durumdaki tek bir geçersiz alan artık bütün ilerlemeyi sıfırlamaz. Yükleme önce katı doğrulamayı dener, olmazsa geçerli bölümleri koruyup yalnız geçersiz kayıtları atlar (`salvageBackup`); özgün kopya kurtarma yedeği olarak saklanır ve Ayarlar'dan aynı yolla geri yüklenebilir. Dış geri bildirim notu ve transkript sınırı 20.000 karaktere çıkarıldı; metin alanları doğrulayıcının kabul ettiği sınırla sınırlandı. Tarayıcıda denendi: 4.100 karakterlik notla yeniden yükleme (ilerleme korundu), sınırı aşan kayıtla yeniden yükleme (uyarı + geri kalan ilerleme korundu), aynı dosyanın Ayarlar'dan içe alınması.
+- `npm run check`: bütün modüllerin sözdizimi başarılı.
+- `npm run build`: statik `dist/` çıktısı başarılı.
+
+Yeni testlerin kapsadığı kabul ölçütleri:
+
+| Ölçüt | Test |
+|---|---|
+| 7 · Dil bilgisi | 11 modül, 69 ders (67 + 2 eşleme dersi), kodların benzersizliği; 36 mikro dersin her biri tam bir derse eşli; 69 dersin hepsinde Özet ve kontrol sorusu; her modülde 6–8 soruluk tarama; öncelikli 20 dersin Tam anlatımında şablonun bütün parçaları (işlev, yapı, kullanım, karşılaştırma, 1–3 sık hata, ≥4 örnek, 5–8 alıştırma tanıma → dönüştürme → üretim sırasıyla, her maddede cevap ve gerekçe, üretimde örnek ve kontrol listesi, tekrar maddeleri, sınav bağlantısı, konuşma kalıbı, özet); her maddenin kendi cevabının ve kabul edilen alternatiflerin doğru puanlanması; görev etiketi → ders kodu eşlemesi. |
+| 8 · Konuşma | 4 × 7 cümlelik set, cümle başına 8–12 sn pencere, artan uzunluk, v0.1 cümlelerinin aynen korunması; 4 × 4 soruluk set (deneyimle başlayıp görüşle biten), 45 sn, v0.1 sorularının korunması; 48 ifade (40–60 aralığı); 12 telaffuz dersi. **Dikte karşılaştırması birim testleri:** büyük-küçük harf, noktalama, kısaltma (don't, it's, I'll, can't, eğik kesme işareti) ve sayı eşdeğerleri (2 = two, 200, 21, 10:30, 3rd), eksik/eklenen/değişen kelime raporu. |
+| Kayıt ve yedek | Eski bir v0.1 yedeği yeni alanlar boş olarak yüklenir; v0.2 alanları JSON gidiş-dönüşünde korunur; geçersiz ders kodu, mod, öz değerlendirme ve dikte değerleri reddedilir. |
+| Ölçüm ve öneri | Farklı gün tekrarı (yanlış madde aynı gün değil ertesi gün), haftalık konuşma günü sayımı, tek önerilen adımın öncelik sırası. |
+| Çevrimdışı | Servis çalışanının önbellek listesinin bütün modülleri içerdiği. |
+
+## Tarayıcıda gerçekten denenenler
+
+Uygulama içi tarayıcı bölmesi bu oturumda localhost'a erişimi reddettiği için testler bilgisayardaki Google Chrome'un başsız (headless) modunda, DevTools protokolüyle yapıldı. Mikrofon için Chrome'un sahte ses cihazı kullanıldı.
+
+| Akış | Sonuç |
+|---|---|
+| 390 px ve 320 px görünüm | 19 ekranın hepsinde yatay taşma yok (Bugün, Çalış, Konuşma, Dil bilgisi, dersler, taramalar, Kelimeler, İfade bankası, Rotam, Kaynaklar, Ayarlar, telaffuz dersleri, tekrar) |
+| 1280 px masaüstü | Yan menü, ders okuyucu ve tablo düzeni incelendi |
+| Ders ilerlemesi | G2.7 Tam anlatımında 4. ekrana geçildi, sayfa yeniden açılınca aynı ekrandan devam etti |
+| Alıştırma | Yanlış seçenek → geri bildirim ve tekrar kuyruğu; eğik kesme işaretli dönüştürme cevabı doğru sayıldı; cümle dizme doğru puanlandı |
+| Farklı gün tekrarı | Yanlış madde ertesi güne planlandı; tarihi geçmiş hâle getirilince tekrar yeni cümleyle açıldı, doğru cevap sonraki tekrarı ileri tarihe taşıdı |
+| Eski bağlantı | `#lesson/g001` → `#lesson/G1.2` yönlendirmesi |
+| Modül taraması | Modül 8'de yanlışlar ilgili derslere yönlendirdi; puan gösterilmedi |
+| Bugün | Devam noktası (yarım ders, prova, tekrar) ve tek önerilen adım gösterildi |
+| Listen and Repeat (öğrenme) | Dikte karşılaştırması "4/5 kelime eşleşti · dikte eşleşmesi"; öz değerlendirme; sonraki cümle; sahte mikrofonla kayıt alındı, IndexedDB'ye kaydedildi, oynatıcı göründü |
+| Interview (prova) | Soru bir kez çaldı, 45 sn pencere otomatik başladı ve kayıt yapıldı, bitince metin, plan, inceleme araçları ve transkript alanı açıldı |
+| İfade kartı | İfade destesi tekrar akışı ve puanlama |
+| Yedek | Tarayıcıdaki gerçek durum `validateBackup` ile doğrulandı |
+
+Test sırasında oluşan örnek yanıtlar ve ses dosyaları kaynak koduna veya ZIP'e dahil değildir.
+
+## v0.3 · 16 Kasım 2026
+
+Kapsam: veri güvenliği, yeniden çizimde metin koruma, deneme günlüğü, hata defteri, ses seçimi, mikrofon ön hazırlığı, yedek paylaşımı ve hatırlatması, ses kaydı yönetimi, güncelleme bildirimi, Konuşma sekmeleri. `schemaVersion: 1` korunur; yeni `itemReviews` ve `examLog` alanları isteğe bağlıdır ve eski yedekler yüklenir.
+
+- `npm test`: **71 test, 71 başarılı** (58 + v0.3 için 13). Yeni testler: süreli oturumun dakikayı doldurması, tekrar çözümün bağımsız doğruluktan ayrılması, hata tekrarının farklı gün kuralı, deneme kaydının doğrulanması ve yalnız aynı koşulda karşılaştırma, yeni alanların yedek gidiş-dönüşü ve kurtarma, ses sıralaması, sürüm tutarlılığı, service worker'ın sahte önbellekle çalıştırılması (taze dosyalarla önbellek, yalnız istenince geçiş, çevrimdışı kabuk), yayın damgasının güncelliği.
+
+Tarayıcıda 390 px ve 320 px'te denenenler:
+
+| Akış | Sonuç |
+|---|---|
+| Mülakat transkripti ve dış geri bildirim notu | Öz değerlendirmeye dokununca metin, açık "Örnek cevap" ve kaydırma konumu korundu; metin yazarken kaydedildi; sonraki soru temiz açıldı |
+| Telaffuz dersi diktesi | "Karşılaştır" sonrası metin ve açık bölüm korundu, sonuç göründü |
+| 60 dakikalık oturum | 21 görev, 60 dakika |
+| Hata tekrarı | Yanlış cevap kuyruğa girdi; ertesi güne alınmış durumda Bugün "1 soruyu yeniden deneme zamanı" önerdi; doğru cevap bir sonraki tekrarı ileri aldı; Reading kartı "1 bağımsız çalışma · 1 tekrar çözüm" gösterdi |
+| Deneme sonuçların | Kayıt, form temizliği, değer türü değişince diğer alanların korunması, geçersiz girişte uyarı, "aynı koşuldaki önceki ilk çözüm" satırı |
+| Ayarlar | Ses listesi (ilk sırada Samantha, yenilik sesleri sonda), ses kaydı kullanımı, son yedek satırı |
+| Taşma | 12 ekranda 320 ve 390 px'te yatay taşma yok |
+
+v0.3'te doğrulanmayanlar: **güncelleme bildirimi ve çevrimdışı açılış gerçek tarayıcıda denenmedi** (test tarayıcısı service worker kaydetmiyor; mantık birim testiyle çalıştırıldı). Paylaşım menüsüyle yedek, mikrofon ön hazırlığı ve ses seçimi yalnız gerçek iPhone'da doğrulanabilir.
+
+## v0.4 · 16 Kasım 2026 · içerik
+
+Alıştırma 48 → 90 (tahmini 177 → 333 dakika), kelime kartı 126 → 180, konuşma seti 8 → 12. `npm test`: **73 test, 73 başarılı**. Her yeni cevap anahtarlı madde kendi cevabıyla puanlayıcıdan geçirildi; dört yeni cloze metni boşluklar doldurulmuş hâliyle okundu; her cümle dizme maddesinin tek doğru sırası olduğu test edildi. Yeni içerik `unreviewed`: ikinci okuma ve tercihen uzman incelemesi bekliyor. Tarayıcıda yeniden denenmedi (kod değişmedi, yalnız veri eklendi).
+
+## Doğrulanmayanlar ve sınırlar
+
+- **Fiziksel iPhone:** Safari/ana ekran kurulumu, mikrofon izni ve izin reddi, kilit ekranı, iOS klavye diktesi ve gerçek dikte çıktısı denenmedi. Dikte karşılaştırması birim testleriyle doğrulandı; iPhone'un ürettiği gerçek metinle ayrıca denenmeli.
+- **TTS sesleri:** Başsız Chrome'da konuşma sesi yok; uygulama `end` olayı gelmezse tahmini süreyle devam eder. Telaffuz örneklerinin iPhone İngilizce sesiyle doğru seslendirildiği kontrol edilmedi (CONTENT-SPEC yayın kontrolü 5).
+- **İçerik incelemesi:** Yeni içerik (20 Tam anlatım, 27 Özet, taramalar, konuşma setleri, ifade bankası, telaffuz dersleri) AI yardımıyla özgün yazıldı ve `unreviewed` olarak işaretli. Yapısal test bir dil incelemesi yerine geçmez; ikinci okuma ve tercihen uzman incelemesi gerekir.
+- **Tam anlatım:** 49 dersin Tam anlatımı planlandı; uygulamada "planlandı" olarak görünür.
+- **Ölçüm:** TOEFL bandı, CEFR seviyesi, telaffuz puanı veya Speaking bandı üretilmez. ETS deneme sonucunu uygulamada kaydetme sonraki sürüm özelliğidir.
+- **Prova modu** sınav simülasyonu değildir; tarayıcı TTS'si ve dokunmayla başlatma gerektirir.
+- GitHub push, dış barındırma ve yayımlama yapılmadı.
+
+## Sonraki adımlar (REVIEW.md ile uyumlu)
+
+1. Bu hafta başlangıç ölçümü (ETS dijital örnek veya PDF + resmî ses).
+2. Gerçek iPhone'da kurulum, kayıt, dikte, TTS ve yedek geri yükleme kontrolü.
+3. Başlangıç ölçümünde görülen hatalara göre sonraki Tam anlatım partisi; öncelikli 20 dersin ikinci okuması.

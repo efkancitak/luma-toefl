@@ -1,0 +1,10 @@
+import { mkdir, cp, access, rm } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+const root = fileURLToPath(new URL('../', import.meta.url));
+const files = ['index.html','styles.css','app.js','core.js','storage.js','ui.js','media.js','views','data','icons','manifest.webmanifest','sw.js','.nojekyll'];
+for (const file of files) await access(resolve(root, file));
+await rm(resolve(root, 'dist'), { recursive:true, force:true });
+await mkdir(resolve(root, 'dist'), { recursive:true });
+for (const file of files) await cp(resolve(root, file), resolve(root, 'dist', file), { recursive:true });
+console.log('Static app prepared in dist/. Upload its contents to an HTTPS static host.');
