@@ -89,6 +89,7 @@ export function createState(now = new Date()) {
     activity: [],
     itemReviews: {},
     examLog: [],
+    learned: [],
   };
 }
 
@@ -181,6 +182,26 @@ export function selectExercises(bank, attempts, options = {}) {
   }
 
   return selected;
+}
+
+const LEVEL_RANK = Object.freeze({ A1: 0, A2: 1, B1: 2, B2: 3, C1: 4, C2: 5 });
+
+/**
+ * A full practice set for one scope (all skills, one skill or one task type),
+ * ordered from A1 to C2. Items already answered are left out, so starting the
+ * same set again never presents a solved item; once every item in the scope is
+ * solved, the whole scope comes back as a repeat round.
+ */
+export function buildSet(bank, attempts, { skill = "all", taskType = "all" } = {}) {
+  const scope = (Array.isArray(bank) ? bank : [])
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => item && typeof item.id === "string" && SKILLS.includes(item.skill))
+    .filter(({ item }) => matchesFilter(item.skill, skill) && matchesFilter(item.taskType, taskType))
+    .sort((a, b) => (LEVEL_RANK[a.item.level] ?? 9) - (LEVEL_RANK[b.item.level] ?? 9) || a.index - b.index)
+    .map(({ item }) => item);
+  const solved = new Set((Array.isArray(attempts) ? attempts : []).filter((a) => a && typeof a.itemId === "string").map((a) => a.itemId));
+  const fresh = scope.filter((item) => !solved.has(item.id));
+  return { items: fresh.length ? fresh : scope, repeat: fresh.length === 0 && scope.length > 0, total: scope.length, solved: scope.length - fresh.length };
 }
 
 export function createSession(items, options = {}, now = new Date()) {
@@ -966,7 +987,19 @@ function sanitizeReviewSession(value) {
     failBackup("reviewSession.index geçersiz");
   }
   if (typeof value.revealed !== "boolean") failBackup("reviewSession.revealed boolean olmalı");
-  return { itemIds, index: value.index, revealed: value.revealed };
+  const clean = { itemIds, index: value.index, revealed: value.revealed };
+  if (value.pick != null) {
+    if (!Number.isInteger(value.pick) || value.pick < -1 || value.pick > 3) failBackup("reviewSession.pick geçersiz");
+    clean.pick = value.pick;
+  }
+  for (const field of ["right", "wrong"]) {
+    if (value[field] != null) {
+      if (!Number.isInteger(value[field]) || value[field] < 0 || value[field] > BACKUP_LIMITS.itemIds) failBackup(`reviewSession.${field} geçersiz`);
+      clean[field] = value[field];
+    }
+  }
+  if (value.scope != null) clean.scope = boundedString(value.scope, "reviewSession.scope", 40);
+  return clean;
 }
 
 function sanitizeAttempt(value, label) {
@@ -1291,6 +1324,14 @@ export function createExamEntry(input, now = new Date()) {
   }
 }
 
+const LEARNED_LIMIT = 5_000;
+
+function sanitizeLearned(value) {
+  if (value == null) return [];
+  if (!Array.isArray(value) || value.length > LEARNED_LIMIT) failBackup("learned geçerli bir dizi değil");
+  return [...new Set(value.map((id, index) => boundedString(id, `learned[${index}]`, BACKUP_LIMITS.id, false)))];
+}
+
 export function validateBackup(input) {
   let value = input;
   if (typeof input === "string") {
@@ -1353,6 +1394,7 @@ export function validateBackup(input) {
     activity: sanitizeOptionalArray(value.activity, "activity", 3_000, sanitizeActivityEntry),
     itemReviews: sanitizeRecordMap(value.itemReviews ?? {}, "itemReviews", sanitizeItemReview),
     examLog: sanitizeOptionalArray(value.examLog, "examLog", EXAM_LOG_LIMIT, sanitizeExamEntry),
+    learned: sanitizeLearned(value.learned),
   };
 }
 
@@ -1375,6 +1417,7 @@ const SALVAGE_LABELS = Object.freeze({
   activity: "etkinlik kaydı",
   itemReviews: "hata tekrarı",
   examLog: "deneme sonucu",
+  learned: "öğrenildi işareti",
 });
 
 /**
@@ -1513,6 +1556,7 @@ export function salvageBackup(input) {
     activity: list("activity", sanitizeActivityEntry, ACTIVITY_LIMIT),
     itemReviews: records("itemReviews", sanitizeItemReview),
     examLog: list("examLog", sanitizeExamEntry, EXAM_LOG_LIMIT),
+    learned: list("learned", (id, index) => boundedString(id, `learned[${index}]`, BACKUP_LIMITS.id, false), LEARNED_LIMIT),
   });
   const dropped = [...counts].map(([field, count]) => ({ field, label: SALVAGE_LABELS[field] ?? field, count }));
   return { state, dropped };

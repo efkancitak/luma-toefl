@@ -60,6 +60,14 @@ Tarayıcıda 390 px ve 320 px'te denenenler:
 
 v0.3'te doğrulanmayanlar: **güncelleme bildirimi ve çevrimdışı açılış gerçek tarayıcıda denenmedi** (test tarayıcısı service worker kaydetmiyor; mantık birim testiyle çalıştırıldı). Paylaşım menüsüyle yedek, mikrofon ön hazırlığı ve ses seçimi yalnız gerçek iPhone'da doğrulanabilir.
 
+## v0.5 · 19 Kasım 2026 · telefon geri bildirimi
+
+Kelime destesi 1019 (A1 91 · A2 157 · B1 217 · B2 232 · C1 203 · C2 119), ifade bankası 119 (A1–C1), dört şıklı kelime ve ifade çalışması, A1→C2 tam setler (düzey, süre ve sayaç seçimi kaldırıldı), Complete the Words için harf sayısı, sonuç işaretleri ve Türkçe çeviri, yeni tasarım katmanı. `schemaVersion: 1` korunur; yeni isteğe bağlı alanlar `learned` ve `reviewSession.pick/right/wrong/scope`.
+
+- `npm test`: **82 test, 82 başarılı** (73 + 9). Yeni testler: deste büyüklüğü ve seviye dağılımı, kelime ve kimlik tekilliği, her kartta sözcük türü, 1–3 anlam ve örnek cümle; şıkların dört ve tek doğrulu olması, doğru cevapla anlam paylaşmaması, her seferinde aynı çıkması ve doğru şıkkın konumunun dengeli dağılması; ifade şıklarında aynı işlevden ikinci kalıp olmaması; tam setin A1→C2 sırası, çözülenin tekrar gelmemesi, kaldığı yerden devam ve hepsi bitince tekrar turu; Türkçe çevirilerin varlığı; yeni kayıt alanlarının gidiş-dönüşü ve kurtarılması; kaldırılan kontrollerin kodda kalmaması.
+- Tarayıcıda 390 px'te denenenler: Bugün ekranı, kelime seviye kartları, A1 setinde doğru ve yanlış cevap (renkler, sayaçlar, 10 dakikalık tekrar), “Öğrendim”, sayfa yenilemede cevaplanmış kartın korunması; Okuma seti (A2'den başlıyor, 24 soru), bir soru çözüldükten sonra yeniden açılınca kaldığı yerden devam, başka sete geçip dönünce çözülen sorunun gelmemesi; Complete the Words sonuç ekranı (6/10, işaretler, çeviri); ifade setinde Türkçe soru ve İngilizce şıklar. 320 px'te 12 ekranda yatay taşma yok; konsol hatası yok.
+- Doğrulanmayanlar: yeni kelime ve ifadelerin dil incelemesi (AI yardımıyla yazıldı, `unreviewed`); gerçek iPhone'da yeni tasarım ve yuvarlak yazı tipi.
+
 ## v0.4 · 16 Kasım 2026 · içerik
 
 Alıştırma 48 → 90 (tahmini 177 → 333 dakika), kelime kartı 126 → 180, konuşma seti 8 → 12. `npm test`: **73 test, 73 başarılı**. Her yeni cevap anahtarlı madde kendi cevabıyla puanlayıcıdan geçirildi; dört yeni cloze metni boşluklar doldurulmuş hâliyle okundu; her cümle dizme maddesinin tek doğru sırası olduğu test edildi. Yeni içerik `unreviewed`: ikinci okuma ve tercihen uzman incelemesi bekliyor. Tarayıcıda yeniden denenmedi (kod değişmedi, yalnız veri eklendi).

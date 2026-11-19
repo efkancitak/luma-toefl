@@ -139,6 +139,8 @@ export const exercises = [
       { prefix: "prac", answer: "tice" },
       { prefix: "use", answer: "ful" },
     ],
+    passageTr:
+      "Düzenli ve amaçlı pratik yapıldığında yeni bir dil öğrenmek kolaylaşır. Kısa oturumlar, öğrencilerin daha az baskı hissederken odaklı kalmasını sağlar. Günlük tekrar; çeşitli pratik ve işe yarar kalıplar sayesinde hafızayı güçlendirir. Bir öğrenci sabah kısa bir diyalog dinleyebilir, öğlen önemli ifadelerini tekrar edebilir ve daha sonra sohbette kullanabilir. Bu basit döngü tanımayı aktif hatırlamayla birleştirir; böylece ilerleme tek bir uzun çalışma oturumundan değil, anlamlı ve tekrarlanan kullanımdan gelir.",
     explanation:
       "İlk tam cümle bağlamı kurar. Ardından her ikinci sözcüğün eksik yarısı; ‘brief sessions’, ‘remain focused’ ve ‘useful patterns’ gibi dilbilgisel ve anlamsal ilişkilerle tamamlanır.",
     provenance: "original-ai-assisted",
@@ -167,6 +169,8 @@ export const exercises = [
       { prefix: "sup", answer: "port" },
       { prefix: "gro", answer: "wth" },
     ],
+    passageTr:
+      "Bir topluluk bahçesi, kullanılmayan bir arsayı mahallenin ortak kaynağına dönüştürebilir. Yerel gönüllüler çöpleri temizler, ekim yataklarını hazırlar, yakındaki aileleri karşılar, haftalık atölyeler düzenler, küçük çocuklara rehberlik eder ve sağlıklı büyümeyi destekler. Bahçe üyeleri yeni katılımcılarla aletlerini, tohumlarını ve pratik tavsiyelerini de paylaşır. Sakinler başka türlü tanışamayacakları insanlarla yan yana çalıştığı için bu alan yiyeceğin yanı sıra güven de üretir. Düzenli etkinlikler alanı yetiştirme mevsimi boyunca canlı tutar.",
     explanation:
       "İlk cümle bahçe bağlamını verir. Sonraki düzenli boşluklar ‘local volunteers’, ‘planting beds’, ‘weekly workshops’ ve ‘healthy growth’ gibi doğal öbeklerle çözülür.",
     provenance: "original-ai-assisted",
@@ -195,6 +199,8 @@ export const exercises = [
       { prefix: "com", answer: "fort" },
       { prefix: "sum", answer: "mer" },
     ],
+    passageTr:
+      "Şehir ağaçları, yoğun mahalleleri daha hoş hâle getirirken sıcaklığı da azaltabilir. Geniş taçlar gölge oluşturur, yüzeyleri serinletir, yağmur suyunu emer, yaban hayatını korur, kuşları destekler, gürültüyü azaltır ve yazın mahallenin konforunu artırır. Ancak planlamacılar her türü mevcut toprağa, suya ve sokak genişliğine uygun seçmelidir. Kötü yere dikilmiş bir ağaç kaldırıma zarar verebilir ya da hayatta kalmakta zorlanabilir. Ağaçlar çok sıcak havalarda yürüyüş yollarını da daha rahat hâle getirebilir. Dikkatli seçim, çevresel yararların onlarca yıl sürmesini sağlar.",
     explanation:
       "İlk tam cümle şehir ağaçlarının işlevini tanıtır. Düzenli boşluklar ‘broad canopies’, ‘cool surfaces’, ‘absorb rainfall’ ve ‘during summer’ gibi bağlam ipuçlarıyla tamamlanır.",
     provenance: "original-ai-assisted",
@@ -223,6 +229,8 @@ export const exercises = [
       { prefix: "acad", answer: "emic" },
       { prefix: "stead", answer: "ily" },
     ],
+    passageTr:
+      "Öğrenciler bilgiyi yalnızca yeniden okumak yerine aktif olarak hatırlamaya çalıştığında hafıza gelişir. Kısa sınavlar çaba gerektirir, eksikleri ortaya çıkarır, tekrara yön verir, hatırlamayı güçlendirir, tahmin etmeyi önler, kalıcı bilgi oluşturur ve gelecekteki akademik performansı istikrarlı biçimde artırır. Doğru geri bildirim çok önemlidir, çünkü yanlış bir cevap kalıcı bir anıya dönüşmemelidir. Böylece öğrenciler ilerlemeden önce hangi fikirlerin bir kez daha odaklı tekrar gerektirdiğini bilir. Hatırlama denemelerini birkaç güne yaymak yararlı bir zorluk katar ve hangi fikirlerin gerçekten oturduğunu gösterir.",
     explanation:
       "İlk tam cümle retrieval bağlamını açıklar. Ardından her ikinci sözcükteki eksik yarı; ‘short quizzes’, ‘expose gaps’, ‘strengthen recall’ ve ‘academic performance’ ilişkileriyle bulunur.",
     provenance: "original-ai-assisted",
@@ -1260,6 +1268,8 @@ export const exercises = [
       { prefix: "un", answer: "til" },
       { prefix: "si", answer: "ts" },
     ],
+    passageTr:
+      "Kampüs servisi, ana binaları her on beş dakikada bir birbirine bağlayan ücretsiz bir otobüstür. Kampüsü bir uçtan diğerine yürümek yirmi dakika sürdüğü için öğrencilerin çoğu yoğun sabah saatlerinde servise biner. Şoförler genellikle herkes oturana kadar bekler. Servis sınav gecelerinde de geç saate kadar çalışır; böylece kütüphanede ders çalışan öğrenciler odalarına güvenle dönebilir. Her duraktaki küçük bir ekran bir sonraki otobüsün ne zaman geleceğini gösterir.",
     explanation:
       "İlk cümle konuyu verir. ‘Most students’, ‘during busy morning hours’ ve ‘twenty minutes’ gibi sık birlikte kullanılan sözcükler boşlukları belirler; ‘takes’ ve ‘sits’ tekil özneyle uyum için -s alır.",
     provenance: "original-ai-assisted",
@@ -1288,6 +1298,8 @@ export const exercises = [
       { prefix: "summ", answer: "arize" },
       { prefix: "bri", answer: "efly" },
     ],
+    passageTr:
+      "Birçok öğrenci ders notlarını bilgisayarda yazar, ama elle yazmak daha iyi anlamalarına yardımcı olabilir. Hızlı yazanlar çoğu zaman anlamını düşünmeden her cümleyi kopyalar. Daha yavaş yazanlar ise önemli fikirleri seçip kısaca özetlemek zorundadır. Bu ek çaba yararlıdır, çünkü beyin bilgiyi seçip yeniden düzenlemek zorunda kaldığında onu daha derinden işler. Bu yüzden sınavdan önce kısa el yazısı notları gözden geçirmek, çok sayıda bilgisayar sayfası okumaktan daha hızlı olabilir.",
     explanation:
       "Metin iki grubu karşılaştırır: hızlı yazanlar düşünmeden kopyalar, yavaş yazanlar seçer ve özetler. ‘without’ edatından sonra -ing biçimi (thinking), ‘must’ kipinden sonra yalın fiil (choose) gelir.",
     provenance: "original-ai-assisted",
@@ -1316,6 +1328,8 @@ export const exercises = [
       { prefix: "reme", answer: "mber" },
       { prefix: "pat", answer: "tern" },
     ],
+    passageTr:
+      "Aşı, bağışıklık sistemini gerçek bir enfeksiyon oluşmadan önce bir hastalığı tanımaya hazırlar. Genellikle hastalığa yol açamayan zararsız virüs proteinleri içerir. Bağışıklık hücreleri daha sonra özgül antikorlar üretir ve bu örüntüyü hatırlar. Gerçek virüs ileride vücuda girerse bu hafıza çok daha hızlı bir yanıt sağlar; böylece kişi ciddi belirtilerden kurtulabilir. Bazı aşılar ikinci bir doz gerektirir, çünkü ilk yanıt zamanla zayıflar.",
     explanation:
       "‘harmless’ (-less), ‘illness’ (-ness) ve ‘antibodies’ (çoğul -ies) sözcük yapımıyla tamamlanır. ‘Immune cells … create … and remember’ yapısında iki fiil aynı çoğul özneye bağlıdır, bu yüzden ikisi de yalın biçimdedir.",
     provenance: "original-ai-assisted",
@@ -1344,6 +1358,8 @@ export const exercises = [
       { prefix: "enviro", answer: "nmental" },
       { prefix: "some", answer: "times" },
     ],
+    passageTr:
+      "Gayrisafi yurt içi hasıla, ülkelerin ekonomik performansını karşılaştırmak için yaygın olarak kullanılır. Ancak ekonomistler, üretimin toplumsal refahı doğru yansıtıp yansıtmadığını giderek daha çok sorguluyor. Ücretsiz ev içi emek büyük ölçüde görünmez kalırken çevresel zarar bazen ölçülen geliri artırır. Örneğin bir selden sonra yeniden inşa etmek büyüme sayılır, oysa topluluk eskisinden daha iyi durumda değildir. Bu nedenle alternatif göstergeler geliri sağlık, eğitim ve çevre kalitesiyle birleştirir.",
     explanation:
       "‘whether output accurately reflects’ ve ‘labor remains’ tekil özneyle uyumlu fiil ister. ‘invisible’ ve ‘environmental’ sıfat ekleriyle (-ible, -al), ‘economists’ kişi ekiyle (-ist) kurulur; ‘whereas’ iki durumu karşılaştırır.",
     provenance: "original-ai-assisted",

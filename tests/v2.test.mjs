@@ -211,8 +211,9 @@ test("Interview: six 4-question sets from experience to opinion, 45 s, v0.1 ques
   }
 });
 
-test("phrase bank has 40–60 complete records that do not collide with vocabulary ids", () => {
-  assert.ok(PHRASES.length >= 40 && PHRASES.length <= 60);
+test("phrase bank has at least 100 levelled records that do not collide with vocabulary ids", () => {
+  assert.ok(PHRASES.length >= 100, `${PHRASES.length} phrases`);
+  for (const phrase of PHRASES) assert.ok(["A1", "A2", "B1", "B2", "C1", "C2"].includes(phrase.level), `${phrase.id} level`);
   const ids = new Set(vocabulary.map((v) => v.id));
   for (const phrase of PHRASES) {
     assert.ok(!ids.has(phrase.id), `${phrase.id} unique across decks`);

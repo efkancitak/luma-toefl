@@ -2,15 +2,15 @@
 // BUILD is the fingerprint of the cached files, written by `npm run release`; a test
 // fails when it is stale. Any change therefore yields a new cache, and all modules
 // below are cached together so HTML, JS and content stay consistent.
-const VERSION = 'v0.4.0';
-const BUILD = '15b3c00be5';
+const VERSION = 'v0.5.0';
+const BUILD = '23bd6f65f1';
 const PREFIX = `luma:${self.registration.scope}:`;
 const CACHE = `${PREFIX}${VERSION}-${BUILD}`;
 const ASSETS = [
   './', './index.html', './styles.css',
   './app.js', './core.js', './storage.js', './ui.js', './media.js',
   './views/grammar.js', './views/speaking.js',
-  './data/content.js', './data/library.js', './data/grammar.js', './data/grammar-full-1.js', './data/grammar-full-2.js', './data/speaking.js',
+  './data/content.js', './data/library.js', './data/words.js', './data/vocab.js', './data/grammar.js', './data/grammar-full-1.js', './data/grammar-full-2.js', './data/speaking.js',
   './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png',
 ];
 const urls = new Set(ASSETS.map(path=>new URL(path,self.registration.scope).href));

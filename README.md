@@ -1,4 +1,4 @@
-# Luma — kişisel çalışma alanı (v0.4)
+# Luma — kişisel çalışma alanı (v0.5)
 
 iPhone öncelikli, çevrimdışı metin çalışmasını destekleyen, tek kullanıcılı TOEFL® hazırlık PWA'sı. Hedef tarih varsayılan olarak 15 Ocak 2027; Ayarlar'dan değişir. ETS ile bağlantılı veya ETS tarafından onaylanmış değildir.
 
@@ -53,12 +53,20 @@ Bu bağımlılıksız proje için en kısa Pages kurulumu: kaynak kökünü push
 ## Yayımla ve güncelle (GitHub Pages)
 
 ```sh
-npm test          # 73 test; yayın damgası eskiyse burada uyarır
+npm test          # 82 test; yayın damgası eskiyse burada uyarır
 npm run release   # önbellek damgasını yeniler ve dist/ üretir
 git add -A && git commit -m "…" && git push
 ```
 
 `npm run release`, service worker'a önbelleğe alınan dosyaların parmak izini (`BUILD`) yazar. İçerik veya kod değiştiğinde damga değişir; telefon yeni sürümü arka planda indirir ve üstte **Güncelle** bildirimi gösterir. Bildirime dokununca çalışman kaydedilir ve HTML, JS ve içerik birlikte yenilenir. Damgayı yenilemeden pushlarsan telefon eski sürümde kalır; `npm test` bu durumu yakalar. Ayarlar → **Güncellemeyi denetle** ile elle de bakabilirsin.
+
+## v0.5'te yeni (telefonda kullanım geri bildirimi)
+
+- **Kelimeler:** 180 → **1019 kelime**, seviyelere göre (A1 91, A2 157, B1 217, B2 232, C1 203, C2 119). Ağırlık sınavda sık geçen kampüs ve akademik kelimelerde. Çalışma artık **dört şıklı**: İngilizce kelime, dört Türkçe seçenek (her birinde 1–3 anlam ve sözcük türü), anında doğru/yanlış, ✓/✗ sayaçları, örnek cümle ve “Öğrendim” işareti. Seviye kartlarında öğrenilen/toplam ilerleme görünür.
+- **İfade bankası:** 48 → **119 ifade**, A1–C1 seviyelerine ayrıldı; üç yeni işlev (katılma ve karşı çıkma, ekleme ve sıralama, temkinli konuşma). Çalışma dört şıklı: Türkçe karşılık, dört İngilizce kalıp.
+- **Tam setler:** İçerik düzeyi seçimi, 15/30/60 dakika önerisi ve görev sayacı anahtarı kaldırıldı. Her set (karışık, tek beceri veya tek görev türü) A1'den C2'ye bütün soruları sırayla verir; çözdüğün soru aynı sette tekrar gelmez, set kaldığın yerden devam eder. Hepsi çözülünce set “tekrar çözüm” olarak baştan açılır.
+- **Complete the Words:** her kutuda eksik harf sayısı kadar çizgi; cevaptan sonra metin üzerinde doğru (yeşil) ve yanlış (kırmızı, doğrusuyla) kelimeler ve metnin Türkçesi.
+- **Tasarım:** sade ve net görünüm: yuvarlak sistem yazı tipi, basıldığında içeri giren kalın düğmeler, tek ana renk, doğru/yanlış için yeşil/kırmızı. Logodaki yıldız iPhone'da yeşil emoji kutusu olarak görünüyordu; yerine düz bir nokta kondu.
 
 ## v0.4'te yeni: içerik
 
@@ -89,7 +97,7 @@ git add -A && git commit -m "…" && git push
 
 ## Bu sürümde çalışanlar
 
-- 15/30/60 dakika önerisi ve serbest setler; süre dolunca zorunlu çıkış yok.
+- Tam setler: karışık, tek beceri veya tek görev türü; A1'den C2'ye, kaldığın yerden.
 - Yanıtlar ve yazma taslakları için yerel kayıt; seti bırakarak devam etme.
 - Dört beceri ve yeni sınavın 12 görev türüne göre filtreleme.
 - 90 özgün mikro alıştırma: 24 Reading, 32 Listening, 26 Writing, 8 Speaking (v0.2'de 48).

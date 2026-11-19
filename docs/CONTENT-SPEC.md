@@ -83,7 +83,7 @@ Etiketleme: görev maddelerinin dil bilgisi etiketi GRAMMAR.md ders koduna eşle
 | Görüş ("Do you think… should…?") | Net görüş → gerekçe ve örnek → kapanış | G4.2, G4.5, G10.1 |
 | Varsayım ("What would you do if…?") | Ne yapardın → neden → olası sonuç | G5.2, G5.4 |
 
-**İfade bankası.** 40–60 kayıt. Alanlar: `phrase`, `function` (görüş, örnek, neden, karşılaştırma, zaman kazanma, kapanış), `tr`, `example`, `register` (konuşma/yazı). Örnekler: "From my experience, …", "The main reason is that …", "For instance, last semester …", "That's an interesting question — I'd say …", "Overall, …". Kalıplar ezber cevap değildir; her cevapta bir-iki tanesi yeterlidir, aşırı kalıp doğallığı düşürür.
+**İfade bankası.** 40–60 kayıt (v0.5'te kullanıcı talebiyle 119 kayda çıkarıldı ve her kayda `level` eklendi; yeni işlevler: katılma, ekleme, temkinli konuşma). Alanlar: `phrase`, `function` (görüş, örnek, neden, karşılaştırma, zaman kazanma, kapanış), `tr`, `example`, `register` (konuşma/yazı). Örnekler: "From my experience, …", "The main reason is that …", "For instance, last semester …", "That's an interesting question — I'd say …", "Overall, …". Kalıplar ezber cevap değildir; her cevapta bir-iki tanesi yeterlidir, aşırı kalıp doğallığı düşürür.
 
 **Telaffuz mikro dersleri.**
 
