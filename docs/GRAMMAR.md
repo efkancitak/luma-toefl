@@ -85,7 +85,7 @@ Kısaltmalar: CW = Complete the Words, RD = okuma görevleri, LS = dinleme göre
 | G6.2 | Anlamı değişen fiiller: remember / stop / try + -ing veya to | B1–B2 | Bırakmak anlamında "I stopped to smoke" → "I stopped smoking" | INT |
 | G6.3 | Fiil + nesne + to / yalın fiil: want sb to, make/let sb do | B1 | "My professor wants that I revise it" → "…wants me to revise it"; "made me to wait" → "made me wait" | EM, INT |
 | G6.4 | Bağımlı edatlar | B1–B2 | "discuss about" → "discuss"; "depend from" → "depend on" | CW, EM |
-| G6.5 | Phrasal verbs (kampüs ve akademik) | B1–B2 | "turn off it" → "turn it off" | LS, LR |
+| G6.5 | Phrasal verbs (kampüs ve akademik) · v0.7'de Tam anlatım; 554 ifadelik kart destesiyle bağlantılı | B1–B2 | "turn off it" → "turn it off" | LS, LR |
 
 ## Modül 7 — Yan cümleler
 

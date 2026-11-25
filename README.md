@@ -1,4 +1,4 @@
-# Luma — kişisel çalışma alanı (v0.5)
+# Luma — kişisel çalışma alanı (v0.7)
 
 iPhone öncelikli, çevrimdışı metin çalışmasını destekleyen, tek kullanıcılı TOEFL® hazırlık PWA'sı. Hedef tarih varsayılan olarak 15 Ocak 2027; Ayarlar'dan değişir. ETS ile bağlantılı veya ETS tarafından onaylanmış değildir.
 
@@ -53,12 +53,24 @@ Bu bağımlılıksız proje için en kısa Pages kurulumu: kaynak kökünü push
 ## Yayımla ve güncelle (GitHub Pages)
 
 ```sh
-npm test          # 82 test; yayın damgası eskiyse burada uyarır
+npm test          # 97 test; yayın damgası eskiyse burada uyarır
 npm run release   # önbellek damgasını yeniler ve dist/ üretir
 git add -A && git commit -m "…" && git push
 ```
 
 `npm run release`, service worker'a önbelleğe alınan dosyaların parmak izini (`BUILD`) yazar. İçerik veya kod değiştiğinde damga değişir; telefon yeni sürümü arka planda indirir ve üstte **Güncelle** bildirimi gösterir. Bildirime dokununca çalışman kaydedilir ve HTML, JS ve içerik birlikte yenilenir. Damgayı yenilemeden pushlarsan telefon eski sürümde kalır; `npm test` bu durumu yakalar. Ayarlar → **Güncellemeyi denetle** ile elle de bakabilirsin.
+
+## v0.7'de yeni: öbek fiiller (phrasal verbs)
+
+Kullanıcının `phrasal-verbs-tek-dosya.json` dosyasındaki 554 ifade ve 704 anlam ayrı bir bölüm olarak değil, mevcut yapının içine kondu (`data/phrasal.js`):
+- **Kelimeler destesi:** her ifade bir kart; dosyadaki öncelik seviyeye çevrildi (1 → B1, 2 → B2, 3 → C1; editoryal eşleme, CEFR değil) ve kartlar seviye destelerine eşit aralıklarla karıştırıldı. Destede zaten olan 17 ifade (carry out, rely on…) aynı kimlikle kaldı ve ayrıntıları eklendi. Deste 1657 kart. Şıklarda öbek fiile öbek fiil seçenekleri gelir; kartın arkasında her anlamın kalıbı, nesne yeri (ayrılabilir / sabit / nesnesiz), İngilizce ve Türkçe örneği ve notu, G6.5 dersine bağlantı. Kelime listesinde “Öbek fiil” süzgeci ve konu destesi.
+- **Dil bilgisi G6.5:** Özet'in yanına Tam anlatım: yapı tablosu, ayrılabilir–sabit karşılaştırması, 40 parçacığın çağrışım tablosu, sık hatalar, 7 alıştırma ve 3 tekrar maddesi; son ekrandan öbek fiil kartlarına geçiş.
+
+## v0.6'da yeni
+
+- **Kelimeler B1–C2:** A1–A2 kartları çalışma destesinden çıkarıldı. Deste 1120 kelime (B1 280 · B2 392 · C1 301 · C2 147); sınav metinlerinin konularına göre 10 konu destesi: biyoloji, yer bilimi, astronomi, tarih ve arkeoloji, psikoloji ve toplum, ekonomi, sanat ve dil, teknoloji, kampüs, akademik dil. Temel ifadeler de B1'e alındı.
+- **Complete the Words atölyesi:** 8 → 24 metin (B1→C1), her boşluğun Türkçe anlamı. Üç mod: *Kolay* (kelimenin yarısından fazlası verilir), *Öğrenme* (gerçek format, boşluğa dokununca ipucu: tür → Türkçe anlam → harf harf), *Sınav* (ipucusuz; ölçüm bunu sayar). Sonuçta kelime tablosu ve boşluk türüne göre analiz (yapı kelimesi / ekli kelime / kök kelime) ve en zayıf türe göre öneri; Rotam'da bütün denemelerin tür dağılımı. “Nasıl çözülür?” rehberi: 5 adımlı yöntem, kısa kelime ipuçları, ek tablosu.
+- **Speaking kalıpları:** Öğren sekmesinde puanlamada bakılanlar (ETS puanlama rehberinden özet), 45 saniyede 110+ kelime hız hedefi, 4 adımlı yapı (Cevap → Açıkla → Örnek → Sonuç), zaman kazandıran açılışlar, cevabı genişletmenin 3 yolu (örnek, karşı görüş, karışık duygular şablonu), tonlama ipuçları. 24 mülakat sorusunun örnek cevabı 110–131 kelimeye çıkarıldı ve adımlara göre renklendirildi; tekrar kullanılabilir kalıplar vurgulu. Transkript alanında canlı kelime sayacı. İfade bankasına 15 yüksek değerli kalıp eklendi (134).
 
 ## v0.5'te yeni (telefonda kullanım geri bildirimi)
 

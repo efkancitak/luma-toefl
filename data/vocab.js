@@ -4,9 +4,29 @@
 
 import { vocabulary } from "./library.js";
 import { WORD_BANK } from "./words.js";
+import { PHRASAL } from "./phrasal.js";
 
-export const LEVEL_ORDER = Object.freeze(["A1", "A2", "B1", "B2", "C1", "C2"]);
-export const POS_TR = Object.freeze({ n: "i.", v: "f.", adj: "s.", adv: "zf.", phr: "ifade", prep: "ed.", conj: "bağ." });
+// The study deck starts at B1 (v0.6): A1–A2 cards were removed at the learner's request.
+export const LEVEL_ORDER = Object.freeze(["B1", "B2", "C1", "C2"]);
+export const TOPICS = Object.freeze({
+  biology: "Biyoloji ve ekoloji",
+  earth: "Yer bilimi ve iklim",
+  space: "Astronomi ve fizik",
+  history: "Tarih ve arkeoloji",
+  society: "Psikoloji ve toplum",
+  economy: "Ekonomi ve iş",
+  arts: "Sanat ve dil",
+  tech: "Teknoloji",
+  campus: "Kampüs yaşamı",
+  academic: "Akademik dil",
+  phrasal: "Öbek fiiller (phrasal verbs)",
+});
+const richTopic = (text) => (/campus|course|study planning|study routine|time management|people on campus/.test(String(text)) ? "campus" : "academic");
+export const POS_TR = Object.freeze({ n: "i.", v: "f.", adj: "s.", adv: "zf.", phr: "ifade", prep: "ed.", conj: "bağ.", pv: "öbek f." });
+export const OBJECT_PATTERNS = Object.freeze({ separable: "Ayrılabilir: nesne ortaya da girebilir; zamir mutlaka ortaya (turn it off)", inseparable: "Nesne yeri sabit: nesne edattan sonra gelir (look after it)", intransitive: "Bu anlamda nesnesiz (the plane took off)" });
+export const PHRASAL_LESSON = "G6.5";
+// Editorial mapping of the phrasal file's study priority to deck levels.
+const PRIORITY_LEVEL = { 1: "B1", 2: "B2", 3: "C1" };
 
 function richPos(text) {
   const value = String(text).toLowerCase();
@@ -22,17 +42,57 @@ function richPos(text) {
 
 const slug = (word) => word.normalize("NFKC").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+/** One card per phrasal expression; every sense keeps its pattern, example and note for the card back. */
+const gloss = (text) => String(text).trim().replace(/\.$/u, "").replace(/^./u, (ch) => ch.toLocaleLowerCase("tr"));
+function phrasalDetails([, id, , senses]) {
+  return { id, senses: senses.map(([meaning, pattern, object, example, exampleTr, note, category]) => ({ meaning: meaning.split(/\s*;\s*/).map(gloss).join("; "), pattern, object, example, exampleTr, note, category })) };
+}
+function phrasalMeaning(senses) {
+  // One sense: all its glosses (Tureng-style lines). Several senses: the first gloss of each.
+  if (senses.length === 1) return senses[0][0].split(/\s*;\s*/).map(gloss).join("; ");
+  return senses.map(([meaning]) => gloss(meaning.split(/\s*;\s*/)[0])).join("; ");
+}
+
+/** Merges two lists keeping each in order, spacing the second evenly through the first. */
+function interleave(words, phrasal) {
+  const out = [];
+  let i = 0, j = 0;
+  while (i < words.length || j < phrasal.length) {
+    const nextWord = (i + 1) / (words.length + 1), nextPhrasal = (j + 1) / (phrasal.length + 1);
+    if (j < phrasal.length && (i >= words.length || nextPhrasal < nextWord)) out.push(phrasal[j++]);
+    else out.push(words[i++]);
+  }
+  return out;
+}
+
 function buildDeck() {
   const cards = [];
   for (const level of LEVEL_ORDER) {
     for (const item of vocabulary.filter((entry) => entry.level === level)) {
-      cards.push({ ...item, pos: richPos(item.partOfSpeech), rich: true });
+      cards.push({ ...item, pos: richPos(item.partOfSpeech), topicKey: richTopic(item.topic), rich: true });
     }
-    for (const [word, pos, meaning, example] of WORD_BANK[level] ?? []) {
-      cards.push({ id: `w-${slug(word)}`, word, level, pos, partOfSpeech: pos, meaning, example, definition: "", collocations: [], family: [], topic: "", rich: false });
+    for (const [word, pos, meaning, example, topic = "academic"] of WORD_BANK[level] ?? []) {
+      cards.push({ id: `w-${slug(word)}`, word, level, pos, partOfSpeech: pos, meaning, example, definition: "", collocations: [], family: [], topic, topicKey: topic, rich: false });
     }
   }
-  return Object.freeze(cards);
+  // Phrasal verbs are woven into the level decks (and grouped under one topic), not kept as a separate kit.
+  const byWord = new Map(cards.map((card) => [card.word.toLowerCase(), card]));
+  for (const row of PHRASAL) {
+    const [expression, , priority, senses] = row;
+    const existing = byWord.get(expression);
+    if (existing) {
+      Object.assign(existing, { pos: "pv", topicKey: "phrasal", phrasal: phrasalDetails(row) });
+      continue;
+    }
+    const level = PRIORITY_LEVEL[priority];
+    cards.push({ id: `pv-${row[1]}`, word: expression, level, pos: "pv", partOfSpeech: "pv", meaning: phrasalMeaning(senses), example: senses[0][3], definition: "", collocations: [], family: [], topic: "phrasal", topicKey: "phrasal", rich: false, phrasal: phrasalDetails(row) });
+  }
+  // Spread phrasal verbs evenly through each level, so a level set mixes them with other words.
+  const mixed = LEVEL_ORDER.flatMap((level) => interleave(
+    cards.filter((card) => card.level === level && !card.phrasal),
+    cards.filter((card) => card.level === level && card.phrasal),
+  ));
+  return Object.freeze(mixed);
 }
 
 export const DECK = buildDeck();

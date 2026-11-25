@@ -60,6 +60,21 @@ Tarayıcıda 390 px ve 320 px'te denenenler:
 
 v0.3'te doğrulanmayanlar: **güncelleme bildirimi ve çevrimdışı açılış gerçek tarayıcıda denenmedi** (test tarayıcısı service worker kaydetmiyor; mantık birim testiyle çalıştırıldı). Paylaşım menüsüyle yedek, mikrofon ön hazırlığı ve ses seçimi yalnız gerçek iPhone'da doğrulanabilir.
 
+## v0.7 · 25 Kasım 2026 · öbek fiiller
+
+Kaynak: kullanıcının `phrasal-verbs-tek-dosya.json` dosyası (şema 1.0.0; 554 ifade, 704 anlam, 12 dil bilgisi notu, 40 parçacık). Dosyanın üst verisine göre Türkçe açıklamalar ve örnekler o dosya için özgün yazılmış; içerik incelenmeden aktarıldı, `data/phrasal.js` biçimine dönüştürüldü (çekim tabloları dışarıda bırakıldı).
+
+- `npm test`: **97 test, 97 başarılı** (91 + 6). Yeni testler: bütün ifade ve anlamların aktarılması, her ifadenin tek kart olarak seviye destelerine karışması ve ilk 20 kartta yer alması, mevcut 17 kartın kimliğinin korunması, öbek fiil kartlarına öbek fiil şıkları, G6.5 Tam anlatımının bütün maddelerinin kendi cevabıyla doğru puanlanması, kart arkası ve ders bağlantıları.
+- Tarayıcıda 390 px'te denenenler: seviye ve konu kartları (B1 517 · B2 653 · C1 340 · C2 147; Öbek fiiller 554), “Öbek fiil” liste süzgeci, karışık B1 seti, öbek fiil kartının arkası (anlam, kalıp, nesne yeri, örnek, Türkçesi, not, ders bağlantısı), G6.5 Tam anlatım: parçacık tablosu, alıştırma, desteye geçiş düğmesi. 320 px'te 8 ekranda taşma yok, konsol hatası yok.
+
+## v0.6 · 25 Kasım 2026 · Complete the Words, Speaking kalıpları, B1–C2 kelimeler
+
+Kaynaklar: ETS Speaking Scoring Guide (Listen and Repeat, Take an Interview) ve 2026 Test Blueprint and Specifications PDF'leri okundu (puanlamada bakılanlar, Reading'de morfoloji ve söz dizimi ipuçlarıyla eksik kelime tamamlama, konuşma konularının alanları). ETS içerik sayfası ve Test Overview PDF'i otomatik okuyucuya açılmadı. Kullanıcının verdiği 14 Complete the Words ekran görüntüsü format ve boşluk türleri için incelendi; metinleri uygulamaya kopyalanmadı. Speaking ipuçları kullanıcının paylaştığı video notlarından genel öneri olarak özetlendi; oradaki örnek cevap kullanılmadı, bütün örnekler özgün.
+
+- `npm test`: **91 test, 91 başarılı** (82 + 9). Yeni testler: konu desteleri, 24 metin ve her boşluğun Türkçesi, yeni metinlerde ilk yarının gösterilmesi, boşluk türü sınıflandırması ve rapor, Kolay mod ve ipuçlarının yardımlı sayılması, yeni taslak alanlarının (mod, ipucu) gidiş-dönüşü, 24 örnek cevabın 4 adımı ve 110–135 kelimesi, Speaking rehberi, yüksek değerli kalıplar.
+- Tarayıcıda 390 px'te denenenler: B1–C2 seviye ve 10 konu kartı, konu destesinden şıklı set, Complete the Words rehberi, Öğrenme modunda ipucu (tür → anlam → harf), kontrol sonrası kelime tablosu, tür analizi ve “Odaklan” önerisi, ipucu alınan denemenin yardımlı kaydı; Speaking Öğren sekmesi (renkli örnek cevap, kalıplar), mülakatta renkli örnek cevap ve transkript kelime sayacı. 320 px'te 13 ekranda taşma yok, konsol hatası yok.
+- Doğrulanmayanlar: yeni kelime, metin ve örnek cevapların dil incelemesi; gerçek iPhone'da görünüm.
+
 ## v0.5 · 19 Kasım 2026 · telefon geri bildirimi
 
 Kelime destesi 1019 (A1 91 · A2 157 · B1 217 · B2 232 · C1 203 · C2 119), ifade bankası 119 (A1–C1), dört şıklı kelime ve ifade çalışması, A1→C2 tam setler (düzey, süre ve sayaç seçimi kaldırıldı), Complete the Words için harf sayısı, sonuç işaretleri ve Türkçe çeviri, yeni tasarım katmanı. `schemaVersion: 1` korunur; yeni isteğe bağlı alanlar `learned` ve `reviewSession.pick/right/wrong/scope`.

@@ -281,6 +281,48 @@ export function gradeAnswer(item, response) {
   return { correct: false, score: 0, feedback: "Bu soru türü puanlanamıyor." };
 }
 
+// ── v0.6: Complete the Words — what kind of word a gap is ─────────────────
+
+const FUNCTION_WORDS = new Set(("a an the this that these those there their they them it its he she his her we our us you your i my me " +
+  "to of in on at by for from with into onto through across over under between among within without about after before during until since " +
+  "than then as so and or but nor yet if when while where which who whom whose what why how because although though unless whether " +
+  "both either neither each every some any many much few more most other another such not no can could will would may might must should " +
+  "shall do does did is are was were be been being has have had also only even just very too up out off down around along").split(" "));
+const SUFFIX = /(?:s|es|ed|ing|ly|er|ers|est|tion|tions|sion|sions|ment|ments|ness|ity|ive|ous|al|ful|less|able|ible|ance|ence|ant|ent|ize|ise|ure|ism|ist|ists|ship|ies|ied)$/u;
+
+// Words whose ending only looks like a suffix.
+const NOT_SUFFIXED = new Set("summer remember noise water number paper center consider matter order offer power answer process series species surface always perhaps universe purpose wonder winter river silver chapter disease increase release promise".split(" "));
+
+export const GAP_KINDS = Object.freeze({
+  function: "Yapı kelimesi",
+  form: "Ekli kelime",
+  word: "Kök kelime",
+});
+
+/** "function" (the, which, through…), "form" (a stem plus an ending: -s, -ed, -ly, -tion…) or "word" (a plain content word). */
+export function gapKind(word) {
+  const value = String(word ?? "").toLowerCase();
+  if (FUNCTION_WORDS.has(value)) return "function";
+  if (value.length >= 5 && SUFFIX.test(value) && !NOT_SUFFIXED.has(value)) return "form";
+  return "word";
+}
+
+/** Per-gap result and totals by kind for one answered Complete the Words item. */
+export function clozeReport(item, response) {
+  const given = Array.isArray(response) ? response : [];
+  const rows = (item?.gaps ?? []).map((gap, index) => {
+    const word = `${gap.prefix}${gap.answer}`;
+    return { index, word, kind: gapKind(word), given: String(given[index] ?? ""), correct: normalizedText(given[index]) === normalizedText(gap.answer) };
+  });
+  const byKind = {};
+  for (const row of rows) {
+    const bucket = (byKind[row.kind] ??= { right: 0, total: 0 });
+    bucket.total += 1;
+    if (row.correct) bucket.right += 1;
+  }
+  return { rows, byKind };
+}
+
 export function skillStats(attempts) {
   const result = Object.fromEntries(
     SKILLS.map((skill) => [skill, {
@@ -874,6 +916,8 @@ function sanitizeDraft(value, key) {
     "showTranscript",
     "transcriptViewed",
     "modelViewed",
+    "mode",
+    "hints",
   ]);
   for (const field of Object.keys(value)) {
     if (!safeKey(field) || !allowed.has(field)) failBackup(`drafts.${key}.${field} desteklenmiyor`);
@@ -902,6 +946,17 @@ function sanitizeDraft(value, key) {
     }
   }
   if (Object.hasOwn(value, "result")) clean.result = sanitizeResult(value.result, `drafts.${key}.result`);
+  if (Object.hasOwn(value, "mode")) {
+    if (!["easy", "learn", "exam"].includes(value.mode)) failBackup(`drafts.${key}.mode geçersiz`);
+    clean.mode = value.mode;
+  }
+  if (Object.hasOwn(value, "hints")) {
+    clean.hints = sanitizeRecordMap(value.hints, `drafts.${key}.hints`, (entry, index) => {
+      if (!/^\d{1,2}$/u.test(index)) failBackup(`drafts.${key}.hints.${index} geçersiz`);
+      if (!Number.isInteger(entry) || entry < 0 || entry > 30) failBackup(`drafts.${key}.hints.${index} geçersiz`);
+      return entry;
+    });
+  }
   // Live state objects can contain an optional property with value `undefined`;
   // JSON export naturally omits it, so object validation must do the same.
   if (Object.hasOwn(value, "selfRating") && value.selfRating !== undefined) {

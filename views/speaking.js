@@ -3,7 +3,7 @@
 // match and external feedback are stored and shown separately.
 
 import { compareDictation, weeklySummary, WEEKLY_SPEAKING_TARGET, SPEAKING_TEXT_LIMIT, MAX_PLAYS } from "../core.js";
-import { REPEAT_SETS, INTERVIEW_SETS, INTERVIEW_TYPES, ANSWER_PLAN, REPEAT_TECHNIQUE, PRONUNCIATION, PRONUNCIATION_BY_ID, PHRASE_BY_ID, PROMPTS, SET_BY_ID, SPEAKING_META } from "../data/speaking.js";
+import { REPEAT_SETS, INTERVIEW_SETS, INTERVIEW_TYPES, ANSWER_PLAN, STEPS, SPEAKING_GUIDE, REPEAT_TECHNIQUE, PRONUNCIATION, PRONUNCIATION_BY_ID, PHRASE_BY_ID, PROMPTS, SET_BY_ID, SPEAKING_META } from "../data/speaking.js";
 import { LESSON_BY_CODE } from "../data/grammar.js";
 import { e, icon, head, dictationDiff, legend, speakable, dictionaryUrl, shortDate } from "../ui.js";
 import { speak, speakChunks, cancelSpeech, startRecording, stopRecording, recorderStatus, micSupported, modelThenRecording, isBusy, prepareMic } from "../media.js";
@@ -12,6 +12,26 @@ const SELF_LABELS = { clarity: "Anlaşılabilirlik", task: "Görevi karşılama"
 const KIND_LABEL = { repeat: "Listen and Repeat", interview: "Take an Interview" };
 
 const runItem = (run, id) => (run.items[id] ||= {});
+const PACE_TARGET = 110;
+
+/** Four-step colour legend. */
+export function stepLegend() {
+  return `<div class="step-legend">${Object.entries(STEPS).map(([key, step]) => `<span class="step-chip step-${key}">${e(step.label)}</span>`).join("")}</div>`;
+}
+
+/** A model answer split into the four steps, with reusable phrases highlighted. */
+export function annotatedModel(item, { listen = true } = {}) {
+  if (!item.segments) return `<div class="model" lang="en">${e(item.model)}</div>`;
+  const words = item.model.split(/\s+/).filter(Boolean).length;
+  const body = item.segments.map(([key, text]) => `<span class="seg step-${key}" title="${e(STEPS[key]?.label ?? "")}">${e(text).replace(/\{([^}]+)\}/g, '<b class="kp">$1</b>')}</span>`).join(" ");
+  return `${stepLegend()}<p class="model annotated" lang="en">${body}</p><p class="small muted">${words} kelime · 45 saniyede söylenebilecek hız (hedef ${PACE_TARGET}+). Kalın yazılanlar başka sorularda da kullanabileceğin kalıplar.</p>${listen ? `<button class="btn small secondary" data-action="say" data-say="${e(item.model)}">${icon("sound")} Örnek cevabı dinle</button>` : ""}`;
+}
+
+function paceLine(text) {
+  const words = String(text || "").trim().split(/\s+/).filter(Boolean).length;
+  if (!words) return "Cevabını dikteyle yazınca kelime sayın burada görünür.";
+  return `${words} kelime · 45 saniyelik bir cevap için hedef ${PACE_TARGET}+${words >= PACE_TARGET ? " ✓" : ` (${PACE_TARGET - words} eksik)`}. Dikte kelime sayısıdır; puan değildir.`;
+}
 const currentSet = (run) => (run ? SET_BY_ID.get(run.setId) : null);
 const currentItem = (run) => currentSet(run)?.items[run.index] ?? null;
 const recordingId = (run, item) => `${run.id}:${item.id}`;
@@ -52,8 +72,28 @@ export function speakingHubView(ctx) {
   <p class="small muted spaced">Luma telaffuz puanı veya Speaking bandı üretmez. Öz değerlendirme, dikte eşleşmesi ve dış geri bildirim ayrı tutulur ve tek bir sayıda birleştirilmez. Cevap yapısı ve telaffuz dersleri <a href="#speaking/learn">Öğren</a>, inceleme araçları <a href="#speaking/tools">Araçlar</a> sekmesinde.</p>`;
 }
 
+function guideSection() {
+  const g = SPEAKING_GUIDE;
+  const sample = INTERVIEW_SETS.flatMap((set) => set.questions).find((q) => q.id === "int-2-4");
+  const sample2 = INTERVIEW_SETS.flatMap((set) => set.questions).find((q) => q.id === "int-1-1");
+  return `<div class="section-title"><h2>Speaking'de puanı ne belirler?</h2></div>
+  <section class="card"><ul class="score-list">${g.scoring.map(([title, text]) => `<li><strong>${e(title)}</strong><span>${e(text)}</span></li>`).join("")}</ul><p class="small muted spaced">ETS'nin Take an Interview puanlama rehberinden özetlendi. Her cevap 0–5 arası puanlanır.</p></section>
+  <div class="section-title"><h2>Hız hedefi: 45 saniyede 110+ kelime</h2></div>
+  <section class="card"><p>${e(g.pace)}</p><p class="small muted spaced">${e(g.scenario)}</p></section>
+  <div class="section-title"><h2>Basit tut: 4 adım</h2></div>
+  <section class="card">${stepLegend()}<ol class="plan-steps spaced">${ANSWER_PLAN.map((step) => `<li class="step-${e(step.key)}"><strong>${e(step.step)}</strong><span>${e(step.detail)}</span><small>${e(step.seconds)}</small></li>`).join("")}</ol>
+  <h3 class="spaced" lang="en">${e(sample2.text)}</h3>${annotatedModel(sample2)}</section>
+  <div class="section-title"><h2>Düşünmek için zaman kazan</h2></div>
+  <section class="card"><ul class="checklist">${g.openers.map((line) => `<li lang="en">${e(line)}</li>`).join("")}</ul><p class="small muted spaced">${e(g.openersTip)}</p></section>
+  <div class="section-title"><h2>Cevabını genişletmenin 3 yolu</h2></div>
+  <section class="card"><ol class="tool-list">${g.expand.map(([title, text]) => `<li><strong>${e(title)}.</strong> ${e(text)}</li>`).join("")}</ol>
+  <h3 class="spaced" lang="en">${e(sample.text)}</h3><p class="small muted">Karışık duygular şablonu:</p>${annotatedModel(sample)}</section>
+  <div class="section-title"><h2>Söyleyiş ipuçları</h2></div>
+  <section class="card"><ul class="checklist">${g.delivery.map((line) => `<li>${e(line)}</li>`).join("")}</ul><p class="small spaced"><strong>Listen and Repeat:</strong> ${e(g.repeat)}</p><div class="row wrap spaced"><a class="btn small secondary" href="#words/phrases">İfade bankası</a><a class="btn small secondary" href="#pron/P11">Tonlama dersi</a><a class="btn small secondary" href="#pron/P12">Anlam öbekleri dersi</a></div></section>`;
+}
+
 function learnTab(ctx) {
-  return `<div class="section-title"><h2>45 saniyelik cevap yapısı</h2></div>
+  return `${guideSection()}<div class="section-title"><h2>Soru türüne göre 45 saniyelik plan</h2></div>
   <section class="card"><ol class="plan-steps">${ANSWER_PLAN.map((step) => `<li><strong>${e(step.step)}</strong><span>${e(step.detail)}</span><small>${e(step.seconds)}</small></li>`).join("")}</ol>
   <div class="table-wrap spaced"><table class="format-table struct-table"><thead><tr><th>Soru türü</th><th>Plan</th><th>Açılış</th><th>Dersler</th></tr></thead><tbody>${Object.values(INTERVIEW_TYPES).map((type) => `<tr><td data-label="Soru türü"><strong>${e(type.label)}</strong><br><small lang="en">${e(type.example)}</small></td><td data-label="Plan">${type.plan.map(e).join(" → ")}</td><td data-label="Açılış" lang="en">${e(type.opener)}</td><td data-label="Dersler">${type.grammar.map((code) => `<a href="#lesson/${e(code)}">${e(code)}</a>`).join(" ")}</td></tr>`).join("")}</tbody></table></div>
   <p class="small muted spaced">Kalıplar ezber cevap değildir; her cevapta bir-iki ifade yeterlidir. <a href="#words/phrases">İfade bankası</a> 48 kalıbı kelime tekrarına kart olarak ekler.</p></section>
@@ -103,7 +143,7 @@ function reviewTools(ctx, run, set, item) {
   const selfDims = repeat ? ["clarity", "task"] : ["clarity", "task", "development"];
   return `<div class="tool-block"><h3>Kendi kaydını incele</h3>${state.recordingId ? `<audio class="recording-player" controls data-recording-id="${e(state.recordingId)}" aria-label="Kendi kaydın"></audio><div class="row wrap"><button class="btn small soft" data-action="sp-model-mine">${icon("repeat")} Model + kaydım art arda</button></div>` : `<p class="small muted">Bu adımda ses kaydı yok. ${micSupported() ? "" : "Bu tarayıcıda kayıt desteklenmiyor; "}Sesli söyleyip aşağıdaki dikte alanıyla kelimeleri kontrol edebilirsin.</p>`}<div class="row wrap"><button class="btn small secondary" data-action="say" data-say="${e(item.text)}">${icon("sound")} ${repeat ? "Modeli dinle" : "Soruyu dinle"}</button>${recordButton(run, item, repeat ? item.seconds + 5 : 45)}</div></div>
   ${repeat ? `<div class="tool-block"><h3>Dikte ile kelime kontrolü</h3><p class="small muted">Alana dokun, klavyedeki mikrofonla cümleyi söyle (veya yaz), sonra karşılaştır.</p><textarea id="dict-${e(item.id)}" class="dictation-input" lang="en" rows="2" maxlength="${SPEAKING_TEXT_LIMIT}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Dikte edilen cümle">${e(state.dictation ?? "")}</textarea><button class="btn small" data-action="sp-compare">Karşılaştır</button>${comparison ? dictationDiff(comparison) + legend() : ""}</div>`
-    : `<div class="tool-block"><h3>Transkript ve dış geri bildirim</h3><p class="small muted">Cevabını dikteyle bu alana söyle. Transkript yalnız cihazında kalır; kopyalama düğmesi istemi yalnız senin cevabınla hazırlar.</p><textarea id="dict-${e(item.id)}" class="dictation-input" lang="en" rows="4" maxlength="${SPEAKING_TEXT_LIMIT}" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Cevabının transkripti">${e(state.dictation ?? "")}</textarea><div class="row wrap"><button class="btn small secondary" data-action="sp-save-transcript">Transkripti kaydet</button><button class="btn small" data-action="copy-prompt" data-kind="transcript">${icon("copy")} Transkript istemini kopyala</button></div><label class="field spaced">Dış geri bildirimden aldığın not (isteğe bağlı)<textarea id="ext-${e(item.id)}" rows="2" maxlength="${SPEAKING_TEXT_LIMIT}" aria-label="Dış geri bildirim notu">${e(state.external ?? "")}</textarea></label><button class="btn small secondary" data-action="sp-save-external">Notu kaydet</button></div>`}
+    : `<div class="tool-block"><h3>Transkript ve dış geri bildirim</h3><p class="small muted">Cevabını dikteyle bu alana söyle. Transkript yalnız cihazında kalır; kopyalama düğmesi istemi yalnız senin cevabınla hazırlar.</p><textarea id="dict-${e(item.id)}" class="dictation-input" lang="en" rows="4" maxlength="${SPEAKING_TEXT_LIMIT}" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Cevabının transkripti">${e(state.dictation ?? "")}</textarea><p class="small pace-line" id="pace-${e(item.id)}">${e(paceLine(state.dictation))}</p><div class="row wrap"><button class="btn small secondary" data-action="sp-save-transcript">Transkripti kaydet</button><button class="btn small" data-action="copy-prompt" data-kind="transcript">${icon("copy")} Transkript istemini kopyala</button></div><label class="field spaced">Dış geri bildirimden aldığın not (isteğe bağlı)<textarea id="ext-${e(item.id)}" rows="2" maxlength="${SPEAKING_TEXT_LIMIT}" aria-label="Dış geri bildirim notu">${e(state.external ?? "")}</textarea></label><button class="btn small secondary" data-action="sp-save-external">Notu kaydet</button></div>`}
   <div class="tool-block"><h3>Öz değerlendirme</h3><p class="small muted">0 = yeniden denemeliyim · 3 = rahatça yaptım. Resmî puan değildir.</p>${selfDims.map((dim) => `<div class="self-dim"><span>${SELF_LABELS[dim]}</span><div class="mini-rating">${[0, 1, 2, 3].map((value) => `<button class="rating ${state.self?.[dim] === value ? "selected" : ""}" data-action="sp-self" data-dim="${dim}" data-value="${value}" aria-pressed="${state.self?.[dim] === value}">${value}</button>`).join("")}</div></div>`).join("")}</div>`;
 }
 
@@ -148,8 +188,8 @@ export function runView(ctx) {
   ${!repeat ? `<p class="small spaced">Soru türü: <strong>${e(INTERVIEW_TYPES[item.type].label)}</strong></p>` : ""}
   ${stage}${learnControls}${text}
   ${!repeat && (!rehearsal || phase === "review") ? interviewHelp(set, item, !rehearsal) : ""}
-  ${!repeat && phase === "review" ? `<details class="spaced"><summary class="model-summary">Örnek cevabı incele</summary><div class="model" lang="en">${e(item.model)}</div><button class="btn small secondary" data-action="say" data-say="${e(item.model)}">${icon("sound")} Örnek cevabı dinle</button><p class="small muted">Örnek, kendi örneğini geliştirmen için; ezberlenecek bir cevap değildir.</p></details>` : ""}
-  ${!rehearsal && !repeat ? `<details class="spaced"><summary class="model-summary">Örnek cevabı incele</summary><div class="model" lang="en">${e(item.model)}</div></details>` : ""}
+  ${!repeat && phase === "review" ? `<details class="spaced" open><summary class="model-summary">Örnek cevap · 4 adım</summary>${annotatedModel(item)}<p class="small muted">Örnek, kendi örneğini geliştirmen için; ezberlenecek bir cevap değildir. Yapıyı ve kalıpları al, içeriği kendi hayatından doldur.</p></details>` : ""}
+  ${!rehearsal && !repeat ? `<details class="spaced"><summary class="model-summary">Örnek cevap · 4 adım</summary>${annotatedModel(item)}</details>` : ""}
   ${after ? reviewTools(ctx, run, set, item) : ""}
   <div id="speak-error" class="inline-error" role="alert">${ctx.ui.micError && phase !== "responding" ? e(ctx.ui.micError) : ""}</div>
   <div class="bottom-actions"><a class="btn secondary" href="#speaking">Şimdilik bırak</a>${after ? `<button class="btn" data-action="sp-next" ${isBusy() ? "disabled" : ""}>${run.index === set.items.length - 1 ? "Seti bitir" : repeat ? "Sonraki cümle" : "Sonraki soru"} ${icon("arrow")}</button>` : ""}</div>
@@ -498,6 +538,8 @@ export function handleSpeakingInput(ctx, element) {
   }
   if (element.id === `dict-${item.id}` && run.kind === "interview") {
     runItem(run, item.id).dictation = element.value.slice(0, SPEAKING_TEXT_LIMIT);
+    const pace = document.getElementById(`pace-${item.id}`);
+    if (pace) pace.textContent = paceLine(element.value);
     ctx.persistSoon();
     return true;
   }

@@ -10,11 +10,13 @@ import { PHRASES } from "../data/speaking.js";
 
 // ── Vocabulary deck ────────────────────────────────────────────────────────
 
-test("the deck holds about a thousand unique words, more at each level up to B2", () => {
-  assert.ok(DECK.length >= 1000, `${DECK.length} cards`);
+test("the deck holds over a thousand unique B1–C2 words, more at each level up to B2", () => {
+  assert.ok(DECK.length >= 1100, `${DECK.length} cards`);
+  assert.deepEqual(LEVEL_ORDER, ["B1", "B2", "C1", "C2"]);
+  assert.ok(!DECK.some((card) => card.level === "A1" || card.level === "A2"), "no A1–A2 cards in the study deck");
   const count = Object.fromEntries(LEVEL_ORDER.map((level) => [level, DECK.filter((card) => card.level === level).length]));
-  assert.ok(count.A1 >= 80 && count.A2 >= 150 && count.B1 >= 200 && count.B2 >= 220 && count.C1 >= 180 && count.C2 >= 100, JSON.stringify(count));
-  assert.ok(count.A1 < count.A2 && count.A2 < count.B1 && count.B1 < count.B2, JSON.stringify(count));
+  assert.ok(count.B1 >= 250 && count.B2 >= 350 && count.C1 >= 280 && count.C2 >= 140, JSON.stringify(count));
+  assert.ok(count.B1 < count.B2, JSON.stringify(count));
   const words = DECK.map((card) => card.word.trim().toLowerCase());
   assert.equal(new Set(words).size, words.length, "no word appears twice");
   assert.equal(new Set(DECK.map((card) => card.id)).size, DECK.length, "ids are unique");
@@ -23,21 +25,24 @@ test("the deck holds about a thousand unique words, more at each level up to B2"
 test("every card has a part of speech, one to three Turkish meanings and an English example", () => {
   for (const [level, rows] of Object.entries(WORD_BANK)) {
     assert.ok(LEVEL_ORDER.includes(level));
-    for (const row of rows) assert.equal(row.length, 4, JSON.stringify(row));
+    for (const row of rows) assert.equal(row.length, 5, JSON.stringify(row));
   }
   for (const card of DECK) {
     assert.ok(POS_TR[card.pos], `${card.id} part of speech ${card.pos}`);
     const meanings = meaningsOf(card);
     assert.ok(meanings.length >= 1 && meanings.length <= 3, `${card.id} meanings`);
-    assert.match(card.example, /^[A-Z0-9"'].*[.?!]$/u, `${card.id} example is a sentence`);
-    assert.ok(card.example.toLowerCase().includes(card.word.toLowerCase().split(" ")[0].slice(0, 3)), `${card.id} example uses the word`);
+    assert.match(card.example, /^[A-Z0-9"'].*[.?!]["']?$/u, `${card.id} example is a sentence`);
+    // Phrasal verbs often use irregular past forms (broke out, came across): check the particle instead of the verb stem.
+    const probe = card.pos === "pv" ? card.word.toLowerCase().split(" ").at(-1) : card.word.toLowerCase().split(" ")[0].slice(0, 3);
+    assert.ok(card.example.toLowerCase().includes(probe), `${card.id} example uses the word`);
   }
 });
 
 test("word ids are stable: derived from the word, so progress survives later edits", () => {
   assert.equal(DECK_BY_ID.get("w-achieve")?.word, "achieve");
   assert.equal(DECK_BY_ID.get("w-cope-with")?.word, "cope with");
-  assert.equal(DECK_BY_ID.get("v001")?.word, "class", "v0.1 ids are kept");
+  assert.equal(DECK_BY_ID.get("v031")?.word, "analyze", "v0.1 ids are kept");
+  assert.equal(DECK_BY_ID.get("v001"), undefined, "A1 cards are no longer in the deck");
 });
 
 test("multiple-choice options: four, one correct, no shared meaning, same every time", () => {

@@ -470,4 +470,62 @@ export const FULL_LESSONS_B = {
     speaking: { pattern: "I was wondering if I could…", model: "I was wondering if I could join the study group this semester.", step: "Kalıbı kibar bir tonla, sonu hafifçe alçalarak söyle." },
     recap: ["Selamlama: Dear + unvan + soyadı; kapanış: Best regards, + ad.", "Rica: I was wondering if… / Would it be possible…; 'I want' yerine.", "Amaç ilk iki cümlede; argo ve emoji yok."],
   }),
+  // Built from the learner's phrasal verbs file (v0.7); its cards live in the word deck under the same lesson.
+  "G6.5": F("G6.5", {
+    function: "Fiil + parçacık (up, out, off…) ya da fiil + edat birleşimiyle tek kelimelik fiilden farklı, yeni bir anlam kurarız: figure out (çözmek), carry out (yürütmek), look into (araştırmak). Konuşmada ve dinleme metinlerinde çok sık geçer; anlamı çoğu zaman parçaların toplamından tahmin edilemez.",
+    structure: {
+      head: ["Tür", "Kalıp", "Örnek"],
+      rows: [
+        ["Ayrılabilir (separable)", "fiil + isim + parçacık / fiil + parçacık + isim", "Turn the lamp off. / Turn off the lamp."],
+        ["Ayrılabilir + zamir", "fiil + zamir + parçacık (zorunlu)", "Turn it off. (Turn off it değil)"],
+        ["Nesne yeri sabit (inseparable)", "fiil + edat + nesne", "Look after her. / Look into the problem."],
+        ["Üç parçalı", "fiil + parçacık + edat + nesne", "I can't put up with the noise."],
+        ["Nesnesiz (intransitive)", "fiil + parçacık", "The plane took off. / Practice paid off."],
+        ["Edat + -ing", "… to / about / on + V-ing", "I'm looking forward to meeting you."],
+      ],
+    },
+    usage: "Önce kartın kalıbına (pattern) bak: “carry something out / carry it out” ayrılabilir demektir; “look after someone” nesnenin edattan sonra geldiğini söyler; “take off” tek başına ise o anlamda nesne almaz. Aynı ifadenin farklı anlamları farklı kalıplara sahip olabilir: Practice paid off (karşılığını verdi, nesnesiz) – We paid the loan off (borcu kapattık, ayrılabilir). Zaman değişince yalnız fiil çekimlenir, parçacık aynı kalır: pay off → pays off → paid off → paying off. Parçacıkların çağrışımları (up = tamamlama/artış, out = sona kadar/ortaya çıkarma, off = ayrılma/durdurma) hatırlamaya yardım eder ama kesin çeviri kuralı değildir. Akademik yazıda bazı phrasal verb'lerin tek kelimelik karşılığı daha resmîdir: look into → investigate, carry out → conduct, find out → discover.",
+    contrast: {
+      title: "ayrılabilir – nesne yeri sabit",
+      text: "Ayrılabilir ifadelerde isim nesne iki yere de gelebilir, zamir ise mutlaka ortaya girer. Nesne yeri sabit ifadelerde (look after, look into, go over, put up with) nesne hep son edattan sonra gelir; zamir de öyle.",
+      pairs: [
+        ["We carried out the survey. / We carried the survey out.", "Ayrılabilir: iki sıra da doğru"],
+        ["We carried it out.", "Zamir ortaya girer"],
+        ["Let's go over the notes. / Let's go over them.", "Sabit: nesne hep sonda"],
+        ["Our plan finally paid off.", "Nesnesiz anlam: arkasına nesne gelmez"],
+      ],
+    },
+    mistakes: [
+      ["Turn off it.", "Turn it off.", "Ayrılabilir ifadede zamir nesne parçacıktan önce gelir."],
+      ["Could you look her after?", "Could you look after her?", "look after nesne yeri sabit: nesne edattan sonra."],
+      ["I'm looking forward to meet you.", "I'm looking forward to meeting you.", "Buradaki to edattır; ardından fiil -ing alır."],
+    ],
+    examples: [
+      ["The researchers carried out a survey of 300 students.", "Araştırmacılar 300 öğrenciyle bir anket yürüttü.", "akademik"],
+      ["The professor pointed out a mistake in my graph.", "Hoca grafiğimdeki bir hataya dikkat çekti.", "kampüs"],
+      ["We couldn't figure out the last question, so we asked the TA.", "Son soruyu çözemedik, bu yüzden asistana sorduk.", "kampüs"],
+      ["The committee is looking into the cause of the delay.", "Komite gecikmenin nedenini araştırıyor.", "akademik"],
+      ["I came up with a simpler way to study vocabulary.", "Kelime çalışmak için daha basit bir yol buldum.", "konuşma"],
+      ["All that speaking practice finally paid off.", "O kadar konuşma çalışması sonunda karşılığını verdi.", "konuşma"],
+    ],
+    exercises: [
+      { stage: "recognition", type: "mcq", prompt: "Choose the correct sentence.", options: ["Please turn off it.", "Please turn it off.", "Please turn it of.", "Please off turn it."], answer: 1, why: "turn off ayrılabilir; zamir (it) parçacıktan önce gelir." },
+      { stage: "recognition", type: "mcq", prompt: "‘The library is looking into the problem.’ What does ‘look into’ mean here?", options: ["to ignore", "to investigate", "to repair quickly", "to look inside a room"], answer: 1, why: "look into = bir konuyu incelemek, araştırmak." },
+      { stage: "recognition", type: "gap", prompt: "We ___ the experiment last week. (past simple of 'carry out')", answer: "carried out", accept: [], why: "Geçmiş zamanda yalnız fiil çekimlenir: carry → carried; out aynı kalır." },
+      { stage: "transformation", type: "rewrite", prompt: "Replace the noun with a pronoun: ‘She filled out the form.’", source: "She filled out the form.", answer: "She filled it out.", accept: [], why: "Zamir nesne ayrılabilir ifadenin ortasına girer: filled it out." },
+      { stage: "transformation", type: "gap", prompt: "I'm looking forward to ___ my results. (get)", answer: "getting", accept: [], why: "look forward to: to edat; ardından -ing." },
+      { stage: "production", type: "order", prompt: "Build the sentence.", tokens: ["She", "came", "up", "with", "a", "better", "idea"], answer: "She came up with a better idea.", accept: [], why: "come up with üç parçalıdır; nesne (a better idea) en sona gelir." },
+      { stage: "production", type: "free", prompt: "Write 2–3 sentences about a problem you solved. Use ‘figure out’ and one other phrasal verb.", model: "Last month my laptop kept freezing during online classes. I looked into the problem and figured out that an old program was using all the memory. I uninstalled it, and the laptop hasn't broken down since.", checklist: ["figure out doğru kalıpla kullanıldı", "Zamir nesne varsa doğru yerde (figure it out)", "Geçmiş zamanda yalnız fiil çekimlendi"] },
+    ],
+    review: [
+      { type: "mcq", prompt: "Choose the correct sentence.", options: ["Can you look my dog after?", "Can you look after my dog?", "Can you look after of my dog?", "Can you after look my dog?"], answer: 1, why: "look after nesne yeri sabit: look after my dog." },
+      { type: "gap", prompt: "The puzzle was hard, but we finally ___ the answer. (past simple of 'work out')", answer: "worked out", accept: [], why: "Geçmiş zamanda yalnız fiil çekimlenir: worked out; zamirle ‘worked it out’ olurdu." },
+      { type: "mcq", prompt: "Which sentence uses the phrasal verb WITHOUT an object correctly?", options: ["The plane took off at noon.", "The plane took off the runway it.", "The plane took it off.", "The plane off took."], answer: 0, why: "take off (havalanmak) bu anlamda nesnesizdir." },
+    ],
+    exam: "Dinleme görevlerinde (konuşmalar, duyurular, dersler) phrasal verb'ler çok sık geçer: figure out, sign up, drop off, look into, point out, come up with. Konuşmada doğal ve akıcı duyulmanı sağlarlar. Akademik yazıda bazılarının tek kelimelik karşılığı daha resmîdir (look into → investigate). Complete the Words'te ‘up, out, off’ gibi kısa boşluklar çoğu zaman bir phrasal verb'ün parçasıdır.",
+    speaking: { pattern: "At first I couldn't figure out …, but then I came up with …", model: "At first I couldn't figure out how to manage my time, but then I came up with a simple weekly plan.", step: "Kalıbı kendi deneyiminle sesli söyle; figure it out, set it up gibi zamirli biçimleri de dene." },
+    recap: ["Önce kartın kalıbına bak: ayrılabilir mi, nesne yeri sabit mi, nesnesiz mi?", "Ayrılabilir ifadede zamir ortaya girer: turn it off, fill it out.", "Zaman değişince yalnız fiil çekimlenir: carried out, came up with.", "Edat olan to'dan sonra -ing: look forward to meeting."],
+    particles: true,
+    deck: { scope: "t:phrasal", label: "Öbek fiil kartlarını çalış" },
+  }),
 };

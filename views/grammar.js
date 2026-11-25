@@ -4,6 +4,7 @@
 import { gradeLessonItem, noteLessonMistake, scheduleGrammarReview, dueGrammarCodes, LESSON_TEXT_LIMIT } from "../core.js";
 import { LESSONS, LESSON_BY_CODE, MODULES, TASK_LABELS, FULL_SCREENS, LEGACY_TO_CODE, summaryBlocks, lessonChecks, screeningFor, GRAMMAR_META } from "../data/grammar.js";
 import { e, icon, head, LEVELS, levelInRange } from "../ui.js";
+import { PARTICLES } from "../data/phrasal.js";
 
 const STAGES = { recognition: "Tanıma", transformation: "Dönüştürme", production: "Üretim" };
 const CTX_LABEL = { kampüs: "kampüs", akademik: "akademik", konuşma: "konuşma" };
@@ -97,6 +98,10 @@ function summaryLayer(ctx, lesson) {
 
 // ── Lesson: Tam anlatım ────────────────────────────────────────────────────
 
+function particleTable() {
+  return `<section class="card spaced"><span class="eyebrow muted">PARÇACIKLARIN ÇAĞRIŞIMI</span><p class="small muted spaced">İpucudur, kesin çeviri kuralı değildir: her fiile her parçacık eklenmez. Birleşimi örnek cümlesiyle öğren.</p><div class="particle-list">${PARTICLES.map(([particle, hint, examples, caution]) => `<details class="particle"><summary><strong lang="en">${e(particle)}</strong><span>${e(hint)}</span></summary><p class="small" lang="en">${examples.map(e).join(" · ")}</p>${caution ? `<p class="small muted">${e(caution)}</p>` : ""}</details>`).join("")}</div></section>`;
+}
+
 function exerciseInput(code, item, response, answered) {
   const data = `data-code="${e(code)}" data-item="${e(item.id)}"`;
   if (item.type === "mcq") {
@@ -143,7 +148,7 @@ function fullScreen(ctx, lesson, screen) {
     return `<section class="card"><span class="eyebrow muted">İŞLEV</span><p class="explain spaced">${e(full.function)}</p></section><section class="card spaced"><span class="eyebrow muted">YAPI</span><div class="table-wrap spaced"><table class="format-table struct-table"><thead><tr>${full.structure.head.map((h) => `<th>${e(h)}</th>`).join("")}</tr></thead><tbody>${full.structure.rows.map((row) => `<tr>${row.map((cell, i) => `<td data-label="${e(full.structure.head[i])}" ${i === row.length - 1 ? 'lang="en"' : ""}>${e(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></section>`;
   }
   if (screen === 1) {
-    return `<section class="card"><span class="eyebrow muted">ANLAM VE KULLANIM</span><p class="explain spaced">${e(full.usage)}</p></section><section class="card spaced"><span class="eyebrow muted">KARŞILAŞTIRMA</span><h3 class="spaced">${e(full.contrast.title)}</h3><p class="spaced">${e(full.contrast.text)}</p><div class="pair-list spaced">${full.contrast.pairs.map(([left, right]) => `<div class="pair-row"><span lang="en">${e(left)}</span><span class="muted">${e(right)}</span>${sayButton(left)}</div>`).join("")}</div></section>`;
+    return `<section class="card"><span class="eyebrow muted">ANLAM VE KULLANIM</span><p class="explain spaced">${e(full.usage)}</p></section><section class="card spaced"><span class="eyebrow muted">KARŞILAŞTIRMA</span><h3 class="spaced">${e(full.contrast.title)}</h3><p class="spaced">${e(full.contrast.text)}</p><div class="pair-list spaced">${full.contrast.pairs.map(([left, right]) => `<div class="pair-row"><span lang="en">${e(left)}</span><span class="muted">${e(right)}</span>${sayButton(left)}</div>`).join("")}</div></section>${full.particles ? particleTable() : ""}`;
   }
   if (screen === 2) {
     return `<section class="card"><span class="eyebrow muted">SIK HATALAR</span><div class="mistake-cards spaced">${full.mistakes.map(([wrong, right, why]) => `<div class="mistake-card"><p class="wrong" lang="en">✗ ${e(wrong)}</p><p class="right" lang="en">✓ ${e(right)}</p><p class="small">${e(why)}</p></div>`).join("")}</div><p class="small muted spaced">Bu hatalar Türkçe konuşanlarda sık görülür; her kullanıcıda görüleceği varsayılmaz.</p></section><section class="card spaced"><span class="eyebrow muted">ÖRNEKLER · DİNLE</span>${full.examples.map(([en, tr, context]) => `<div class="example-box example-row"><div><span class="tag plain">${e(CTX_LABEL[context] ?? context)}</span><p class="english" lang="en">${e(en)}</p><p>${e(tr)}</p></div>${sayButton(en, "Örneği dinle")}</div>`).join("")}</section>`;
@@ -154,7 +159,7 @@ function fullScreen(ctx, lesson, screen) {
     return `<div class="notice">Sıra: tanıma → dönüştürme → üretim. ${done}/${full.exercises.length} madde tamamlandı${done ? ` · ${firstRight} madde ilk denemede doğru` : ""}. Yanlış maddeler farklı bir günde yeni cümlelerle tekrar sorulur.</div>${full.exercises.map((item, index) => exerciseCard(lesson.code, item, index, progress)).join("")}`;
   }
   return `<section class="card"><span class="eyebrow muted">SINAV BAĞLANTISI</span><p class="spaced">${e(full.exam)}</p><div class="row wrap spaced">${lesson.tasks.map((task) => `<span class="badge">${e(TASK_LABELS[task] ?? task)}</span>`).join("")}</div></section>
-  <section class="card spaced"><span class="eyebrow muted">KONUŞMA KALIBI</span><h3 class="spaced" lang="en">${e(full.speaking.pattern)}</h3><div class="example-box example-row"><p class="english" lang="en">${e(full.speaking.model)}</p>${sayButton(full.speaking.model, "Kalıbı dinle")}</div><p class="small">${e(full.speaking.step)}</p><a class="text-button" href="#speaking">Konuşma provalarına git ${icon("arrow")}</a></section>
+  <section class="card spaced"><span class="eyebrow muted">KONUŞMA KALIBI</span><h3 class="spaced" lang="en">${e(full.speaking.pattern)}</h3><div class="example-box example-row"><p class="english" lang="en">${e(full.speaking.model)}</p>${sayButton(full.speaking.model, "Kalıbı dinle")}</div><p class="small">${e(full.speaking.step)}</p><a class="text-button" href="#speaking">Konuşma provalarına git ${icon("arrow")}</a></section>${full.deck ? `<section class="card spaced"><span class="eyebrow muted">KELİME KARTLARI</span><p class="spaced">Bu dersin ifadeleri Kelimeler destesinde seviyelerin içinde de karşına çıkar. Hepsini birlikte çalışmak için:</p><button class="btn spaced" data-action="study" data-scope="${e(full.deck.scope)}">${e(full.deck.label)} ${icon("arrow")}</button></section>` : ""}
   <section class="card spaced"><span class="eyebrow muted">ÖZET</span><ul class="checklist spaced">${full.recap.map((line) => `<li>${e(line)}</li>`).join("")}</ul><div class="row wrap spaced"><button class="btn ${progress?.completedAt ? "secondary" : ""}" data-action="lesson-done" data-code="${e(lesson.code)}">${icon("check")} ${progress?.completedAt ? "Ders tamamlandı olarak kayıtlı" : "Dersi tamamladım"}</button></div><p class="small muted spaced">Tamamlandı işareti “öğrenildi” anlamına gelmez; tekrarlar farklı günlerde gelir.</p></section>`;
 }
 

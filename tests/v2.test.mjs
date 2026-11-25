@@ -202,7 +202,8 @@ test("Interview: six 4-question sets from experience to opinion, 45 s, v0.1 ques
       assert.ok(INTERVIEW_TYPES[q.type], `${q.id} type`);
       assert.equal(q.seconds, 45);
       const length = words(q.model).length;
-      assert.ok(length >= 50 && length <= 130, `${q.id} model fits roughly 45 seconds (${length} words)`);
+      assert.ok(length >= 105 && length <= 135, `${q.id} model fits a fluent 45-second pace (${length} words)`);
+      assert.deepEqual(q.segments.map(([step]) => step), ["answer", "explain", "example", "result"], `${q.id} follows the four steps`);
       for (const code of INTERVIEW_TYPES[q.type].grammar) assert.ok(LESSON_BY_CODE.has(code));
     }
   }
