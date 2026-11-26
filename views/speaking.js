@@ -58,10 +58,11 @@ export function speakingHubView(ctx) {
   const themeSet = INTERVIEW_SETS.find((set) => set.id === ctx.ui.rehearsalTheme) ?? INTERVIEW_SETS[0];
   const tab = ["learn", "tools"].includes(ctx.param()) ? ctx.param() : "practice";
   const tabs = `<div class="layer-tabs" role="tablist">${[["practice", "", "Prova"], ["learn", "/learn", "Öğren"], ["tools", "/tools", "Araçlar"]].map(([id, path, label]) => `<a class="layer-tab ${tab === id ? "active" : ""}" role="tab" aria-selected="${tab === id}" href="#speaking${path}">${label}</a>`).join("")}</div>`;
-  const top = `${head("Konuş. Dinle. Karşılaştır.", "Speaking için görev provası, konuşma öğretimi ve kendi konuşmanı inceleme araçları.")}${tabs}`;
+  const top = `${head("Speaking", "Konuşma · görev provası, konuşma öğretimi, puanlama ölçütleri ve kendi konuşmanı inceleme araçları.")}${tabs}`;
   if (tab === "learn") return `${top}${learnTab(ctx)}`;
   if (tab === "tools") return `${top}${toolsTab(ctx, themeSet)}`;
   return `${top}
+  ${ctx.speakingExtras ? ctx.speakingExtras() : ""}
   ${active ? `<section class="card resume-card row between wrap"><div><span class="eyebrow muted">YARIM KALAN PROVA</span><h3>${e(active.title)} · ${run.index + 1}/${active.items.length}</h3><p class="small muted">${KIND_LABEL[active.kind]} · ${run.mode === "rehearsal" ? "Prova modu" : "Öğrenme modu"}</p></div><a class="btn" href="#speak-run">Devam et ${icon("arrow")}</a></section>` : ""}
   ${weekCard(ctx)}
   <section class="card spaced"><span class="eyebrow muted">ÇALIŞMA MODU</span><div class="mode-toggle spaced" role="radiogroup" aria-label="Çalışma modu"><button class="chip ${mode === "learn" ? "active" : ""}" role="radio" aria-checked="${mode === "learn"}" data-action="sp-mode" data-value="learn">Öğrenme modu</button><button class="chip ${mode === "rehearsal" ? "active" : ""}" role="radio" aria-checked="${mode === "rehearsal"}" data-action="sp-mode" data-value="rehearsal">Prova modu</button></div><p class="small muted spaced">${mode === "rehearsal" ? "Prova: ses bir kez çalar, cevap penceresi otomatik başlar (cümle başına 8–12 sn, soru başına 45 sn), metin cevaptan sonra açılır. Sınav simülasyonu değildir; son haftalarda ETS dijital denemesiyle bilgisayarda çalış." : "Öğrenme: yavaş dinleme, öbek öbek dinleme, tekrar dinleme ve metni açma serbest. Kaydı istediğin zaman başlatırsın."}</p></section>

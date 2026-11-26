@@ -47,10 +47,11 @@ const fourOptions = (options, answer, label) => {
 
 // ── Grammar map ────────────────────────────────────────────────────────────
 
-test("grammar map: 11 modules, 67 core lessons plus 2 opened from v0.1 mapping", () => {
+test("grammar map: 11 modules, 67 core lessons, 2 opened from v0.1 mapping and 21 added in v0.8", () => {
   assert.equal(MODULES.length, 11);
-  assert.equal(LESSONS.length, 69);
-  assert.equal(LESSONS.filter((l) => !l.addedInMapping).length, 67, "GRAMMAR.md v4 lists 67 lessons");
+  assert.equal(LESSONS.length, 90);
+  assert.equal(LESSONS.filter((l) => !l.addedInMapping && !l.isNew).length, 67, "GRAMMAR.md v4 lists 67 lessons");
+  assert.equal(LESSONS.filter((l) => l.isNew).length, 21);
   assert.deepEqual(LESSONS.filter((l) => l.addedInMapping).map((l) => l.code).sort(), ["G10.9", "G3.10"]);
   assert.equal(new Set(LESSONS.map((l) => l.code)).size, LESSONS.length, "codes are unique");
   for (const lesson of LESSONS) {
@@ -60,8 +61,8 @@ test("grammar map: 11 modules, 67 core lessons plus 2 opened from v0.1 mapping",
     assert.match(lesson.level, /^(A1|A2|B1|B2|C1|C2)(–(A1|A2|B1|B2|C1|C2))?$/u, `${lesson.code}.level`);
     assert.ok(lesson.mistakes.length >= 1 && lesson.tasks.length >= 1, `${lesson.code} has mistakes and exam tasks`);
   }
-  assert.equal(LESSONS.filter((l) => l.module === 2).length, 13, "noun phrase module has 13 lessons");
-  assert.equal(LESSONS.filter((l) => l.module === 5).length, 7, "conditionals module has 7 lessons");
+  assert.equal(LESSONS.filter((l) => l.module === 2).length, 15, "noun phrase module: 13 lessons + G2.14, G2.15 (v0.8)");
+  assert.equal(LESSONS.filter((l) => l.module === 5).length, 8, "conditionals module: 7 lessons + G5.8 (v0.8)");
 });
 
 test("every v0.1 micro lesson maps to exactly one lesson and keeps its id", () => {
@@ -241,10 +242,16 @@ test("copied prompts carry only the learner's own text and never ask for a score
   const transcript = PROMPTS.transcript("Q?", "my answer");
   assert.match(transcript, /Soru: Q\?/u);
   assert.match(transcript, /Transkriptim: my answer/u);
-  for (const text of [transcript, PROMPTS.rehearsal("theme"), PROMPTS.writing("e-posta", "özet", "yanıt", "yardım yok")]) {
+  for (const text of [transcript, PROMPTS.rehearsal("theme")]) {
     assert.match(text, /TOEFL puanı/u, "prompt explicitly refuses a TOEFL score");
     assert.doesNotMatch(text, /https?:\/\//u);
   }
+  // v0.8: at the learner's request the writing prompt follows the four-step teacher model,
+  // with an estimate that is explicitly unofficial and based on the task rubric.
+  const writing = PROMPTS.writing("e-posta", "özet", "yanıt", "yardım yok");
+  assert.match(writing, /unofficial estimated score on the 0–5 task rubric/u);
+  assert.match(writing, /MY RESPONSE: yanıt/u);
+  assert.doesNotMatch(writing, /https?:\/\//u);
 });
 
 test("new content contains no embedded network URLs", () => {

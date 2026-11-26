@@ -4,7 +4,11 @@
 
 import { vocabulary } from "./library.js";
 import { WORD_BANK } from "./words.js";
-import { PHRASAL } from "./phrasal.js";
+import { WORD_BANK_EXTRA } from "./words-extra.js";
+import { PHRASAL, PARTICLES } from "./phrasal.js";
+import { EXPRESSIONS } from "./expressions.js";
+import { LINKERS, LINK_FUNCTIONS } from "./toolkit.js";
+import { AWL_SUBLISTS } from "./awl.js";
 
 // The study deck starts at B1 (v0.6): A1–A2 cards were removed at the learner's request.
 export const LEVEL_ORDER = Object.freeze(["B1", "B2", "C1", "C2"]);
@@ -20,9 +24,11 @@ export const TOPICS = Object.freeze({
   campus: "Kampüs yaşamı",
   academic: "Akademik dil",
   phrasal: "Öbek fiiller (phrasal verbs)",
+  expr: "Kalıplar (sık ifadeler)",
+  link: "Bağlaçlar ve geçiş ifadeleri",
 });
 const richTopic = (text) => (/campus|course|study planning|study routine|time management|people on campus/.test(String(text)) ? "campus" : "academic");
-export const POS_TR = Object.freeze({ n: "i.", v: "f.", adj: "s.", adv: "zf.", phr: "ifade", prep: "ed.", conj: "bağ.", pv: "öbek f." });
+export const POS_TR = Object.freeze({ n: "i.", v: "f.", adj: "s.", adv: "zf.", phr: "ifade", prep: "ed.", conj: "bağ.", pv: "öbek f.", expr: "kalıp", link: "bağlaç" });
 export const OBJECT_PATTERNS = Object.freeze({ separable: "Ayrılabilir: nesne ortaya da girebilir; zamir mutlaka ortaya (turn it off)", inseparable: "Nesne yeri sabit: nesne edattan sonra gelir (look after it)", intransitive: "Bu anlamda nesnesiz (the plane took off)" });
 export const PHRASAL_LESSON = "G6.5";
 // Editorial mapping of the phrasal file's study priority to deck levels.
@@ -71,7 +77,8 @@ function buildDeck() {
     for (const item of vocabulary.filter((entry) => entry.level === level)) {
       cards.push({ ...item, pos: richPos(item.partOfSpeech), topicKey: richTopic(item.topic), rich: true });
     }
-    for (const [word, pos, meaning, example, topic = "academic"] of WORD_BANK[level] ?? []) {
+    for (const [word, pos, meaning, example, topic = "academic"] of [...(WORD_BANK[level] ?? []), ...(WORD_BANK_EXTRA[level] ?? [])]) {
+      if (cards.some((card) => card.word.toLowerCase() === word.toLowerCase())) continue;
       cards.push({ id: `w-${slug(word)}`, word, level, pos, partOfSpeech: pos, meaning, example, definition: "", collocations: [], family: [], topic, topicKey: topic, rich: false });
     }
   }
@@ -85,18 +92,92 @@ function buildDeck() {
       continue;
     }
     const level = PRIORITY_LEVEL[priority];
-    cards.push({ id: `pv-${row[1]}`, word: expression, level, pos: "pv", partOfSpeech: "pv", meaning: phrasalMeaning(senses), example: senses[0][3], definition: "", collocations: [], family: [], topic: "phrasal", topicKey: "phrasal", rich: false, phrasal: phrasalDetails(row) });
+    const card = { id: `pv-${row[1]}`, word: expression, level, pos: "pv", partOfSpeech: "pv", meaning: phrasalMeaning(senses), example: senses[0][3], definition: "", collocations: [], family: [], topic: "phrasal", topicKey: "phrasal", rich: false, phrasal: phrasalDetails(row) };
+    cards.push(card);
+    byWord.set(expression, card);
   }
-  // Spread phrasal verbs evenly through each level, so a level set mixes them with other words.
+  // Kalıplar (fixed expressions): an existing card keeps its id and gains the details.
+  for (const [expression, meaning, pattern, example, exampleTr, note] of EXPRESSIONS) {
+    const details = { pattern, example, exampleTr, note };
+    const existing = byWord.get(expression);
+    if (existing) {
+      existing.expr = details;
+      if (!existing.phrasal) Object.assign(existing, { pos: "expr", topicKey: "expr" });
+      continue;
+    }
+    const card = { id: `ex-${slug(expression)}`, word: expression, level: "B1", pos: "expr", partOfSpeech: "expr", meaning, example, definition: "", collocations: [], family: [], topic: "expr", topicKey: "expr", rich: false, expr: details };
+    cards.push(card);
+    byWord.set(expression, card);
+  }
+  // Linking words: the quiz asks for the function, so options never share one.
+  for (const [linker, func, meaning, pattern, example, exampleTr, note, level] of LINKERS) {
+    const details = { func, pattern, example, exampleTr, note };
+    const existing = byWord.get(linker.toLowerCase());
+    if (existing) {
+      Object.assign(existing, { pos: "link", topicKey: "link", link: details });
+      continue;
+    }
+    const card = { id: `ln-${slug(linker)}`, word: linker, level, pos: "link", partOfSpeech: "link", meaning, example, definition: "", collocations: [], family: [], topic: "link", topicKey: "link", rich: false, link: details };
+    cards.push(card);
+    byWord.set(linker.toLowerCase(), card);
+  }
+  markAwl(cards);
+  // Spread phrasal verbs, expressions and linkers evenly through each level, so a level set mixes them with other words.
+  const special = (card) => Boolean(card.phrasal || card.expr || card.link);
   const mixed = LEVEL_ORDER.flatMap((level) => interleave(
-    cards.filter((card) => card.level === level && !card.phrasal),
-    cards.filter((card) => card.level === level && card.phrasal),
+    cards.filter((card) => card.level === level && !special(card)),
+    cards.filter((card) => card.level === level && special(card)),
   ));
   return Object.freeze(mixed);
 }
 
+/** AWL headword families → sublist number; a card is marked when its word belongs to a family. */
+function awlFamilies() {
+  const map = new Map();
+  const add = (form, list) => { if (!map.has(form)) map.set(form, list); };
+  AWL_SUBLISTS.forEach((words, index) => {
+    for (const head of words) {
+      const us = head.replace(/ise$/u, "ize").replace(/yse$/u, "yze").replace(/our$/u, "or").replace(/ence$/u, "ense");
+      for (const base of new Set([head, us])) {
+        const stem = base.replace(/e$/u, "");
+        const forms = [base, `${base}s`, `${base}d`, `${base}ed`, `${stem}ing`];
+        if (base.length > 3) {
+          forms.push(...["al", "ion", "ation", "ment", "ity", "ive", "ance", "ence", "ic", "ure", "ent", "ant", "er", "ial", "ly"].map((suffix) => `${stem}${suffix}`));
+          forms.push(base.replace(/ate$/u, "ation"), base.replace(/ent$/u, "ence"), base.replace(/ant$/u, "ance"), base.replace(/y$/u, "ies"));
+        }
+        for (const form of forms) add(form, index + 1);
+      }
+    }
+  });
+  return map;
+}
+function markAwl(cards) {
+  const families = awlFamilies();
+  for (const card of cards) {
+    const list = families.get(card.word.toLowerCase());
+    if (list) card.awl = list;
+  }
+}
+
 export const DECK = buildDeck();
 export const DECK_BY_ID = new Map(DECK.map((card) => [card.id, card]));
+export { LINK_FUNCTIONS };
+
+const PARTICLE_BY_WORD = new Map(PARTICLES.map(([particle, hint, examples]) => [particle, { particle, hint, examples }]));
+/**
+ * Particle hints for a phrasal card: what "up", "off", "down" … usually add,
+ * with other deck expressions that share the particle (fill up → give up, use up …).
+ */
+export function particleHints(card) {
+  if (!card?.phrasal) return [];
+  const words = card.word.toLowerCase().split(/\s+/u).slice(1).filter((word) => PARTICLE_BY_WORD.has(word));
+  return [...new Set(words)].map((word) => {
+    const { particle, hint, examples } = PARTICLE_BY_WORD.get(word);
+    const others = DECK.filter((other) => other.phrasal && other.id !== card.id && other.word.toLowerCase().split(/\s+/u).slice(1).includes(word)).map((other) => other.word);
+    const seen = [...new Set([...examples.map((x) => String(x).toLowerCase()), ...others])].filter((x) => x !== card.word.toLowerCase()).slice(0, 6);
+    return { particle, hint, examples: seen };
+  });
+}
 
 /** Up to three Turkish meanings, split from "a; b; c". */
 export function meaningsOf(card) {

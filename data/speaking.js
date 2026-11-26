@@ -448,11 +448,15 @@ export const PRONUNCIATION = Object.freeze([
 
 /** Prompts copied verbatim from CONTENT-SPEC v4; placeholders filled by the app. */
 export const PROMPTS = Object.freeze({
-  writing: (taskType, summary, response, help) => `Aşağıda özgün bir TOEFL iBT yazma pratiğinin görev özeti ve kendi İngilizce yanıtım var. Geri bildirimi Türkçe yaz. Önce görevin hangi noktalarını karşıladığımı belirt. Metnimden kısa örneklerle en önemli iki veya üç dil ya da yapı hatasını açıkla. Her hata için düzeltme ve bir yeniden yazma önerisi ver. Anlamımı koru. TOEFL puanı veya CEFR seviyesi verme.
-Görev türü: ${taskType}
-Görev özeti: ${summary}
-Yanıtım: ${response}
-Süre ve kullandığım yardım: ${help}`,
+  writing: (taskType, summary, response, help) => `You are an experienced TOEFL iBT Writing teacher. Evaluate my "${taskType}" response in four steps. Keep the feedback short, visual and suitable for an intermediate learner. Write all explanations in Turkish; keep English examples in English.
+1. EVALUATE: Give an unofficial estimated score on the 0–5 task rubric with a one-line reason, and a checklist of the task requirements (done / missing). Judge task completion, development, range of vocabulary and grammar, accuracy${taskType === "Write an Email" ? ", and social conventions (politeness, tone, greeting and closing)" : ", and how well I add to the discussion"}.
+2. IDENTIFY MISTAKES: Show the three most important areas for improvement as "original → correction" with a short explanation each. Do not invent mistakes.
+3. IMPROVE: Show my text and an improved version. Keep my ideas, words and style as much as possible; correct errors and add only what the task needs. Avoid advanced language I would not use.
+4. REPEAT: Copy the exact improved text from step 3, keep the subject, greeting and closing, and replace every second sentence with a numbered blank (1. ____). Do not give the missing sentences.
+End with one concrete priority for my next writing task (grammar, vocabulary or organization).
+TASK: ${summary}
+MY RESPONSE: ${response}
+TIME AND HELP USED: ${help}`,
   transcript: (question, transcript) => `Aşağıda özgün bir TOEFL iBT mülakat pratiği sorusu ve yaklaşık 45 saniyelik cevabımın dikteyle elde edilmiş transkripti var. Transkript dikte hatası içerebilir; yalnız açıkça dil bilgisi veya kelime seçimi olan hataları belirt. Geri bildirimi Türkçe yaz. Soruya doğrudan cevap verip vermediğimi, gerekçe ve örneğimin yeterliliğini ve fikir sırasını değerlendir. En önemli iki veya üç hatayı düzeltmesiyle göster. Aynı fikri daha doğal anlatan, 45 saniyede söylenebilecek bir yeniden konuşma önerisi ver. Telaffuz, akıcılık, TOEFL puanı veya CEFR seviyesi hakkında yorum yapma.
 Soru: ${question}
 Transkriptim: ${transcript}`,

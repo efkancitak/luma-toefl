@@ -33,7 +33,9 @@ test("every card has a part of speech, one to three Turkish meanings and an Engl
     assert.ok(meanings.length >= 1 && meanings.length <= 3, `${card.id} meanings`);
     assert.match(card.example, /^[A-Z0-9"'].*[.?!]["']?$/u, `${card.id} example is a sentence`);
     // Phrasal verbs often use irregular past forms (broke out, came across): check the particle instead of the verb stem.
-    const probe = card.pos === "pv" ? card.word.toLowerCase().split(" ").at(-1) : card.word.toLowerCase().split(" ")[0].slice(0, 3);
+    // Multi-word cards (phrasal verbs, kalıplar, linkers) are checked by their last word.
+    const head = card.word.toLowerCase().replace(/\s*\(.*?\)\s*/gu, " ").trim();
+    const probe = head.includes(" ") || card.pos === "pv" ? head.split(" ").at(-1) : head.slice(0, 3);
     assert.ok(card.example.toLowerCase().includes(probe), `${card.id} example uses the word`);
   }
 });

@@ -21,6 +21,7 @@ test("createState uses the caller's local calendar date and isolated collections
     examDate: "2027-01-15",
     startDate: "2026-11-15",
     targetBand: "",
+    planEnd: "",
   });
   assert.equal(state.schemaVersion, 1);
   assert.deepEqual(state.attempts, []);

@@ -194,3 +194,10 @@ V0.1'deki 36 gramer mikro dersi bu haritaya eşlenir ve kimlikleri korunur. Eşl
 - **Özet:** 69 dersin hepsinde var. 33 ders v0.1 mikro dersini, 9 öncelikli ders kendi Tam anlatım özetini, kalan 27 ders bu sürümde yazılan yeni Özeti kullanır. Tam anlatımı yazılmamış 49 ders uygulamada "Tam anlatım · planlandı" olarak görünür.
 - **Tarama:** her modülde 6–8 soru (Özet kontrol soruları + küçük modüller için ek sorular). Seviye veya puan üretmez.
 - **İnceleme durumu:** `unreviewed`. İçerik AI yardımıyla özgün yazıldı ve otomatik yapı testlerinden geçti; dil uzmanı incelemesi yapılmadı.
+
+
+## v0.8 ekleri (26 Kasım 2026)
+
+Haritaya kendi dersi olmayan 18 konu eklendi (Özet + 5–8 alıştırma): G1.6 emir ve let's · G1.7 So do I / Neither do I · G2.14 gösterme ve belirsiz zamirler · G2.15 kelime türetme · G3.11 used to / be used to / get used to · G3.12 just, already, yet, still, ever, never · G3.13 düzensiz fiiller (112 fiil, V1–V2–V3) · G4.6 would'un bütün kullanımları · G4.7 be able to, managed to, had to, needn't have · G5.8 subjunctive · G6.6 make/do, say/tell, rise/raise, borrow/lend · G6.7 get'in kullanımları (tablo + destedeki bütün get ifadeleri) · G7.8 -ever ve whether … or · G7.9 who / whom / whose / which / that / where / when · G7.10 that'in bütün kullanımları · G8.4 like / as / such as · G9.4 yön edatları · G11.3 sık karıştırılan kelimeler.
+
+Mevcut derslere kullanım tabloları: G2.4 (a few / a little / few / little / many / much …), G4.2 (must / have to / should / had better / be supposed to), G4.4 (modal + have + V3'ün hepsi), G8.3 (very / so / too / enough; too long – so long). Tam anlatımı olmayan her dersin alıştırması `data/grammar-drills.js` ve `data/grammar-extra.js` içinde; kimlikler `G3.1-d1` biçiminde ve farklı gün tekrarı bu maddeleri de kullanır.

@@ -72,6 +72,7 @@ export function createState(now = new Date()) {
       examDate: "2027-01-15",
       startDate: localDateKey(now),
       targetBand: "",
+      planEnd: "",
     },
     session: null,
     attempts: [],
@@ -90,8 +91,49 @@ export function createState(now = new Date()) {
     itemReviews: {},
     examLog: [],
     learned: [],
+    daily: null,
   };
 }
+
+// ── v0.8: the daily training plan ─────────────────────────────────────────
+
+/** Default end of the content plan: about a month before the exam, kept for mock tests and review. */
+export function defaultPlanEnd(examDate) {
+  const serial = calendarSerial(examDate) - 31;
+  return new Date(serial * DAY_MS).toISOString().slice(0, 10);
+}
+
+/**
+ * Days left for the plan, today included. When the end date has passed the
+ * remaining content is spread up to the day before the exam; never below 1.
+ */
+export function planDaysLeft(planEnd, examDate, now = new Date()) {
+  const today = calendarSerial(now);
+  let end = null;
+  try { end = planEnd ? calendarSerial(planEnd) : null; } catch { end = null; }
+  if (end !== null && end >= today) return end - today + 1;
+  let exam = null;
+  try { exam = calendarSerial(examDate); } catch { exam = null; }
+  if (exam !== null && exam > today) return exam - today;
+  return 1;
+}
+
+/** Today's share of a pool: the remaining items divided over the days left, rounded up so the pool always finishes in time. */
+export function dailyQuota(remaining, daysLeft) {
+  const left = Math.max(0, Math.floor(Number(remaining) || 0));
+  return left ? Math.ceil(left / Math.max(1, Math.floor(Number(daysLeft) || 1))) : 0;
+}
+
+/** Merges several ordered lists so each one is spread evenly through the result (task types alternate). */
+export function spreadMerge(lists) {
+  const entries = [];
+  lists.forEach((list, listIndex) => list.forEach((item, index) => entries.push({ item, position: (index + 1) / (list.length + 1), listIndex })));
+  entries.sort((a, b) => a.position - b.position || a.listIndex - b.listIndex);
+  return entries.map((entry) => entry.item);
+}
+
+export const DAILY_STEP_KEYS = Object.freeze(["due", "words", "phrasal", "expr", "grammar", "reading", "listening", "writing", "speaking", "mistakes", "greview"]);
+const DAILY_STEP_LIMIT = 200;
 
 /**
  * Builds a short, varied queue. This is intentionally a transparent heuristic:
@@ -918,6 +960,11 @@ function sanitizeDraft(value, key) {
     "modelViewed",
     "mode",
     "hints",
+    "stage",
+    "improved",
+    "repeat",
+    "repeatChecked",
+    "reqs",
   ]);
   for (const field of Object.keys(value)) {
     if (!safeKey(field) || !allowed.has(field)) failBackup(`drafts.${key}.${field} desteklenmiyor`);
@@ -949,6 +996,23 @@ function sanitizeDraft(value, key) {
   if (Object.hasOwn(value, "mode")) {
     if (!["easy", "learn", "exam"].includes(value.mode)) failBackup(`drafts.${key}.mode geçersiz`);
     clean.mode = value.mode;
+  }
+  if (Object.hasOwn(value, "stage")) {
+    if (!["write", "review"].includes(value.stage)) failBackup(`drafts.${key}.stage geçersiz`);
+    clean.stage = value.stage;
+  }
+  if (Object.hasOwn(value, "improved")) clean.improved = boundedString(value.improved, `drafts.${key}.improved`, 12_000);
+  if (Object.hasOwn(value, "repeat")) {
+    if (!Array.isArray(value.repeat) || value.repeat.length > 40) failBackup(`drafts.${key}.repeat geçersiz`);
+    clean.repeat = Array.from(value.repeat, (entry, index) => (entry == null ? "" : boundedString(entry, `drafts.${key}.repeat[${index}]`, 2_000)));
+  }
+  if (Object.hasOwn(value, "repeatChecked")) {
+    if (typeof value.repeatChecked !== "boolean") failBackup(`drafts.${key}.repeatChecked boolean olmalı`);
+    clean.repeatChecked = value.repeatChecked;
+  }
+  if (Object.hasOwn(value, "reqs")) {
+    if (!Array.isArray(value.reqs) || value.reqs.length > 12) failBackup(`drafts.${key}.reqs geçersiz`);
+    clean.reqs = [...new Set(value.reqs.map((entry, index) => boundedInt(entry, `drafts.${key}.reqs[${index}]`, 0, 11)))];
   }
   if (Object.hasOwn(value, "hints")) {
     clean.hints = sanitizeRecordMap(value.hints, `drafts.${key}.hints`, (entry, index) => {
@@ -1387,6 +1451,20 @@ function sanitizeLearned(value) {
   return [...new Set(value.map((id, index) => boundedString(id, `learned[${index}]`, BACKUP_LIMITS.id, false)))];
 }
 
+function sanitizeDaily(value) {
+  if (value == null) return null;
+  allowOnly(value, "daily", ["date", "createdAt", "steps"]);
+  if (!Array.isArray(value.steps) || value.steps.length > DAILY_STEP_KEYS.length) failBackup("daily.steps geçerli bir dizi değil");
+  const seen = new Set();
+  const steps = value.steps.map((step, index) => {
+    allowOnly(step, `daily.steps[${index}]`, ["key", "ids"]);
+    if (!DAILY_STEP_KEYS.includes(step.key) || seen.has(step.key)) failBackup(`daily.steps[${index}].key geçersiz`);
+    seen.add(step.key);
+    return { key: step.key, ids: idList(step.ids, `daily.steps[${index}].ids`, DAILY_STEP_LIMIT) };
+  });
+  return { date: dateKey(value.date, "daily.date"), createdAt: isoDate(value.createdAt, "daily.createdAt"), steps };
+}
+
 export function validateBackup(input) {
   let value = input;
   if (typeof input === "string") {
@@ -1424,6 +1502,7 @@ export function validateBackup(input) {
     examDate: dateKey(value.profile.examDate, "profile.examDate"),
     startDate: dateKey(value.profile.startDate, "profile.startDate"),
     targetBand: boundedString(value.profile.targetBand, "profile.targetBand", 30),
+    planEnd: value.profile.planEnd ? dateKey(value.profile.planEnd, "profile.planEnd") : "",
   };
   if (!TARGET_BANDS.has(profile.targetBand)) failBackup("profile.targetBand geçersiz");
   const readLessons = [...new Set(value.readLessons.map((id, index) =>
@@ -1450,6 +1529,7 @@ export function validateBackup(input) {
     itemReviews: sanitizeRecordMap(value.itemReviews ?? {}, "itemReviews", sanitizeItemReview),
     examLog: sanitizeOptionalArray(value.examLog, "examLog", EXAM_LOG_LIMIT, sanitizeExamEntry),
     learned: sanitizeLearned(value.learned),
+    daily: sanitizeDaily(value.daily),
   };
 }
 
@@ -1473,6 +1553,7 @@ const SALVAGE_LABELS = Object.freeze({
   itemReviews: "hata tekrarı",
   examLog: "deneme sonucu",
   learned: "öğrenildi işareti",
+  daily: "günün antrenman listesi",
 });
 
 /**
@@ -1556,6 +1637,7 @@ export function salvageBackup(input) {
       if (!TARGET_BANDS.has(band)) failBackup("profile.targetBand geçersiz");
       return band;
     },
+    planEnd: (entry) => (entry ? dateKey(entry, "profile.planEnd") : ""),
   };
   for (const [key, sanitize] of Object.entries(profileFields)) {
     try {
@@ -1612,6 +1694,7 @@ export function salvageBackup(input) {
     itemReviews: records("itemReviews", sanitizeItemReview),
     examLog: list("examLog", sanitizeExamEntry, EXAM_LOG_LIMIT),
     learned: list("learned", (id, index) => boundedString(id, `learned[${index}]`, BACKUP_LIMITS.id, false), LEARNED_LIMIT),
+    daily: whole("daily", sanitizeDaily),
   });
   const dropped = [...counts].map(([field, count]) => ({ field, label: SALVAGE_LABELS[field] ?? field, count }));
   return { state, dropped };

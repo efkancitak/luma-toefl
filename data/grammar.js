@@ -6,6 +6,8 @@
 import { grammar as microLessons } from "./library.js";
 import { FULL_LESSONS_A } from "./grammar-full-1.js";
 import { FULL_LESSONS_B } from "./grammar-full-2.js";
+import { EXTRA_LESSONS, LESSON_TABLES } from "./grammar-extra.js";
+import { DRILLS } from "./grammar-drills.js";
 
 export const GRAMMAR_META = Object.freeze({
   version: 2,
@@ -419,10 +421,21 @@ const LESSON_LIST = [
   }),
 ];
 
+// v0.8: topics that had no lesson of their own (would, used to, get, subjunctive …).
+const EXTRA_DRILLS = {};
+for (const [code, title, level, mistakes, tasks, summary, drills, extra = {}] of EXTRA_LESSONS) {
+  LESSON_LIST.push({ ...L(code, title, level, mistakes, tasks, { ozet: summary, added: false }), family: extra.family ?? null, table: extra.table ?? null, verbs: extra.verbs === true });
+  EXTRA_DRILLS[code] = drills;
+}
+const minor = (code) => code.slice(1).split(".").map(Number);
+LESSON_LIST.sort((a, b) => minor(a.code)[0] - minor(b.code)[0] || minor(a.code)[1] - minor(b.code)[1]);
+const drillsFor = (code) => (DRILLS[code] ?? EXTRA_DRILLS[code] ?? []).map((item, index) => Object.freeze({ id: `${code}-d${index + 1}`, ...item }));
+const NEW_IN_V08 = new Set(EXTRA_LESSONS.map(([code]) => code));
+
 const FULL = { ...FULL_LESSONS_A, ...FULL_LESSONS_B };
 const MICRO = new Map(microLessons.map((lesson) => [lesson.id, lesson]));
 
-export const LESSONS = Object.freeze(LESSON_LIST.map((lesson) => Object.freeze({ ...lesson, full: FULL[lesson.code] ?? null })));
+export const LESSONS = Object.freeze(LESSON_LIST.map((lesson) => Object.freeze({ ...lesson, table: lesson.table ?? LESSON_TABLES[lesson.code] ?? null, family: lesson.family ?? null, verbs: lesson.verbs === true, full: FULL[lesson.code] ?? null, drills: drillsFor(lesson.code), isNew: NEW_IN_V08.has(lesson.code) })));
 export const LESSON_BY_CODE = new Map(LESSONS.map((lesson) => [lesson.code, lesson]));
 
 /** v0.1 micro lesson id → G code. The micro lesson is the lesson's Özet layer. */
