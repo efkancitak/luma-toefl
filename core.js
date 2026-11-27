@@ -73,6 +73,7 @@ export function createState(now = new Date()) {
       startDate: localDateKey(now),
       targetBand: "",
       planEnd: "",
+      extras: false,
     },
     session: null,
     attempts: [],
@@ -92,15 +93,57 @@ export function createState(now = new Date()) {
     examLog: [],
     learned: [],
     daily: null,
+    fills: {},
+    transfers: [],
   };
 }
 
 // ── v0.8: the daily training plan ─────────────────────────────────────────
 
-/** Default end of the content plan: about a month before the exam, kept for mock tests and review. */
+/** Default end of the content plan (v0.9): the exam date itself. */
 export function defaultPlanEnd(examDate) {
-  const serial = calendarSerial(examDate) - 31;
-  return new Date(serial * DAY_MS).toISOString().slice(0, 10);
+  return new Date(calendarSerial(examDate) * DAY_MS).toISOString().slice(0, 10);
+}
+
+/** The v0.8 default (exam − 31 days); a saved plan end equal to it is treated as "not chosen". */
+export function legacyPlanEnd(examDate) {
+  return new Date((calendarSerial(examDate) - 31) * DAY_MS).toISOString().slice(0, 10);
+}
+
+/**
+ * New cards for one day, summed over every card pool (v0.9). A light review day
+ * gets 30; the number falls as reviews pile up (20 at 80 due cards) and reaches
+ * 0 at 140, when reviews alone fill the day. Missed days never add up.
+ */
+export const NEW_CARDS_MAX = 30;
+export function newCardBudget(dueCount) {
+  const due = Math.max(0, Math.floor(Number(dueCount) || 0));
+  if (due <= 40) return NEW_CARDS_MAX;
+  if (due <= 80) return Math.round(NEW_CARDS_MAX - (due - 40) / 4);
+  if (due >= 140) return 0;
+  return Math.round(20 - (due - 80) / 3);
+}
+
+/** Splits a total over pools in proportion to their sizes (largest share first), never more than a pool holds. */
+export function splitBudget(total, sizes) {
+  const list = sizes.map((size) => Math.max(0, Math.floor(Number(size) || 0)));
+  let left = Math.min(Math.max(0, Math.floor(Number(total) || 0)), list.reduce((a, b) => a + b, 0));
+  const out = list.map(() => 0);
+  while (left > 0) {
+    const room = list.map((size, i) => size - out[i]);
+    const sum = room.reduce((a, b) => a + b, 0);
+    if (!sum) break;
+    const shares = room.map((r) => (r * left) / sum);
+    let given = 0;
+    shares.forEach((share, i) => { const n = Math.min(room[i], Math.floor(share)); out[i] += n; given += n; });
+    if (given === 0) {
+      const i = shares.indexOf(Math.max(...shares));
+      out[i] += 1;
+      given = 1;
+    }
+    left -= given;
+  }
+  return out;
 }
 
 /**
@@ -132,7 +175,7 @@ export function spreadMerge(lists) {
   return entries.map((entry) => entry.item);
 }
 
-export const DAILY_STEP_KEYS = Object.freeze(["due", "words", "phrasal", "expr", "grammar", "reading", "listening", "writing", "speaking", "mistakes", "greview"]);
+export const DAILY_STEP_KEYS = Object.freeze(["due", "words", "phrasal", "expr", "fill", "grammar", "reading", "listening", "writing", "transfer", "speaking", "mistakes", "greview"]);
 const DAILY_STEP_LIMIT = 200;
 
 /**
@@ -290,6 +333,23 @@ export function gradeAnswer(item, response) {
     };
   }
 
+  if (item.type === "set") {
+    const questions = Array.isArray(item.questions) ? item.questions : [];
+    const responses = Array.isArray(response) ? response : [];
+    if (!questions.length) return { correct: false, score: 0, feedback: "Soru bulunamadı." };
+    if (questions.some((_, index) => responses[index] === "" || responses[index] == null)) {
+      return { correct: false, score: 0, feedback: "Bütün soruları cevapla." };
+    }
+    const results = questions.map((q, index) => Number(responses[index]) === q.answer);
+    const right = results.filter(Boolean).length;
+    return {
+      correct: right === questions.length,
+      score: right / questions.length,
+      results,
+      feedback: `${right}/${questions.length} soru doğru.`,
+    };
+  }
+
   if (item.type === "gaps") {
     const gaps = Array.isArray(item.gaps) ? item.gaps : [];
     const responses = Array.isArray(response) ? response : [];
@@ -308,6 +368,14 @@ export function gradeAnswer(item, response) {
     };
   }
 
+  if (item.type === "build") {
+    const built = buildResponse(item, response);
+    if (built === null) return { correct: false, score: 0, feedback: "Bütün boşlukları doldurmalısın." };
+    const accepted = [item.answer, ...(Array.isArray(item.alts) ? item.alts : [])].map(normalizedOrderedText);
+    const correct = accepted.includes(normalizedOrderedText(built));
+    return { correct, score: correct ? 1 : 0, feedback: correct ? "Doğru cümle." : "Sözcük sırasını ve cümle yapısını yeniden kontrol et." };
+  }
+
   if (item.type === "order") {
     if (response === undefined || response === null || normalizedText(response) === "") {
       return { correct: false, score: 0, feedback: "Cümleyi oluşturmalısın." };
@@ -321,6 +389,20 @@ export function gradeAnswer(item, response) {
   }
 
   return { correct: false, score: 0, feedback: "Bu soru türü puanlanamıyor." };
+}
+
+/**
+ * Build a Sentence (v0.9 format): the answer frame has fixed words and blanks
+ * (null); the chosen tiles fill the blanks in order. One tile may be extra and
+ * stay unused. Returns the built sentence, or null while a blank is empty.
+ */
+export function buildResponse(item, order) {
+  const slots = Array.isArray(item?.slots) ? item.slots : [];
+  const picks = Array.isArray(order) ? order : [];
+  const blanks = slots.filter((slot) => slot === null).length;
+  if (picks.length !== blanks || picks.some((index) => !Number.isInteger(index) || !item.tokens[index])) return null;
+  let next = 0;
+  return slots.map((slot) => (slot === null ? item.tokens[picks[next++]] : slot)).join(" ").replace(/\s+([,.?!])/gu, "$1");
 }
 
 // ── v0.6: Complete the Words — what kind of word a gap is ─────────────────
@@ -661,6 +743,18 @@ export function noteLessonMistake(previous, itemId, now = new Date()) {
   };
 }
 
+/**
+ * v0.9: a finished lesson gets a delayed check (in three days, with new
+ * sentences) even when every answer was right; one day's success does not
+ * prove the structure is learned. An existing review entry is kept.
+ */
+export function scheduleLessonCheck(previous, now = new Date()) {
+  if (previous) return previous;
+  const date = validDate(now);
+  const due = startOfNextDay(new Date(date.getTime() + 2 * DAY_MS)).toISOString();
+  return { repetitions: 0, intervalDays: 3, dueAt: due, lastReviewedAt: date.toISOString(), missed: [], seen: [], successes: 0 };
+}
+
 /** Result of a review item answered on a later day: correct → growing interval, wrong → tomorrow. */
 export function scheduleGrammarReview(previous, correct, now = new Date()) {
   const date = validDate(now);
@@ -965,6 +1059,9 @@ function sanitizeDraft(value, key) {
     "repeat",
     "repeatChecked",
     "reqs",
+    "qIndex",
+    "played",
+    "revealAt",
   ]);
   for (const field of Object.keys(value)) {
     if (!safeKey(field) || !allowed.has(field)) failBackup(`drafts.${key}.${field} desteklenmiyor`);
@@ -1013,6 +1110,12 @@ function sanitizeDraft(value, key) {
   if (Object.hasOwn(value, "reqs")) {
     if (!Array.isArray(value.reqs) || value.reqs.length > 12) failBackup(`drafts.${key}.reqs geçersiz`);
     clean.reqs = [...new Set(value.reqs.map((entry, index) => boundedInt(entry, `drafts.${key}.reqs[${index}]`, 0, 11)))];
+  }
+  if (Object.hasOwn(value, "qIndex")) clean.qIndex = boundedInt(value.qIndex, `drafts.${key}.qIndex`, 0, 40);
+  if (Object.hasOwn(value, "played")) clean.played = boundedInt(value.played, `drafts.${key}.played`, 0, 1_000);
+  if (Object.hasOwn(value, "revealAt") && value.revealAt !== null && value.revealAt !== undefined) {
+    if (!Number.isFinite(value.revealAt) || value.revealAt < 0) failBackup(`drafts.${key}.revealAt geçersiz`);
+    clean.revealAt = value.revealAt;
   }
   if (Object.hasOwn(value, "hints")) {
     clean.hints = sanitizeRecordMap(value.hints, `drafts.${key}.hints`, (entry, index) => {
@@ -1118,6 +1221,7 @@ function sanitizeReviewSession(value) {
     }
   }
   if (value.scope != null) clean.scope = boundedString(value.scope, "reviewSession.scope", 40);
+  if (value.seed != null) clean.seed = boundedInt(value.seed, "reviewSession.seed", 0, 2 ** 31);
   return clean;
 }
 
@@ -1453,7 +1557,7 @@ function sanitizeLearned(value) {
 
 function sanitizeDaily(value) {
   if (value == null) return null;
-  allowOnly(value, "daily", ["date", "createdAt", "steps"]);
+  allowOnly(value, "daily", ["date", "createdAt", "steps", "v", "weak", "newBudget", "dueCount"]);
   if (!Array.isArray(value.steps) || value.steps.length > DAILY_STEP_KEYS.length) failBackup("daily.steps geçerli bir dizi değil");
   const seen = new Set();
   const steps = value.steps.map((step, index) => {
@@ -1462,7 +1566,72 @@ function sanitizeDaily(value) {
     seen.add(step.key);
     return { key: step.key, ids: idList(step.ids, `daily.steps[${index}].ids`, DAILY_STEP_LIMIT) };
   });
-  return { date: dateKey(value.date, "daily.date"), createdAt: isoDate(value.createdAt, "daily.createdAt"), steps };
+  const clean = { date: dateKey(value.date, "daily.date"), createdAt: isoDate(value.createdAt, "daily.createdAt"), steps };
+  if (value.v != null) clean.v = boundedInt(value.v, "daily.v", 0, 100);
+  if (value.weak != null) {
+    if (!["", ...SKILLS].includes(value.weak)) failBackup("daily.weak geçersiz");
+    clean.weak = value.weak;
+  }
+  for (const field of ["newBudget", "dueCount"]) if (value[field] != null) clean[field] = boundedInt(value[field], `daily.${field}`, 0, 100_000);
+  return clean;
+}
+
+// ── v0.9: typed completion of card examples and writing transfer tasks ────
+
+/** One card's typed-completion record: free (no hint) and hinted successes are kept apart from recognition. */
+function sanitizeFill(value, key) {
+  const label = `fills.${key}`;
+  allowOnly(value, label, ["free", "hint", "wrong", "lastAt", "last"]);
+  const clean = {
+    free: boundedInt(value.free ?? 0, `${label}.free`, 0, 10_000),
+    hint: boundedInt(value.hint ?? 0, `${label}.hint`, 0, 10_000),
+    wrong: boundedInt(value.wrong ?? 0, `${label}.wrong`, 0, 10_000),
+    lastAt: isoDate(value.lastAt, `${label}.lastAt`),
+  };
+  if (value.last != null) {
+    if (!["free", "hint", "wrong"].includes(value.last)) failBackup(`${label}.last geçersiz`);
+    clean.last = value.last;
+  }
+  return clean;
+}
+
+/** Records one typed completion. result: "free" (right, no help), "hint" (right with help) or "wrong". */
+export function noteFill(previous, result, now = new Date()) {
+  if (!["free", "hint", "wrong"].includes(result)) throw new RangeError("Tamamlama sonucu free, hint veya wrong olmalı.");
+  const base = { free: previous?.free ?? 0, hint: previous?.hint ?? 0, wrong: previous?.wrong ?? 0 };
+  base[result] = Math.min(10_000, base[result] + 1);
+  return { ...base, lastAt: validDate(now).toISOString(), last: result };
+}
+
+export const TRANSFER_LIMIT = 60;
+function sanitizeTransfer(value, index) {
+  const label = `transfers[${index}]`;
+  allowOnly(value, label, ["id", "fromItemId", "kind", "createdAt", "dueDay", "taskId", "doneAt", "targets", "results"]);
+  if (!Array.isArray(value.targets) || value.targets.length > 3 || value.targets.length === 0) failBackup(`${label}.targets geçersiz`);
+  if (!["email", "discussion"].includes(value.kind)) failBackup(`${label}.kind geçersiz`);
+  const clean = {
+    id: boundedString(value.id, `${label}.id`, BACKUP_LIMITS.id, false),
+    fromItemId: boundedString(value.fromItemId, `${label}.fromItemId`, BACKUP_LIMITS.id, false),
+    kind: value.kind,
+    createdAt: isoDate(value.createdAt, `${label}.createdAt`),
+    dueDay: dateKey(value.dueDay, `${label}.dueDay`),
+    targets: value.targets.map((target, n) => {
+      allowOnly(target, `${label}.targets[${n}]`, ["rule", "wrong", "right", "why"]);
+      return {
+        rule: boundedString(target.rule, `${label}.targets[${n}].rule`, 80, false),
+        wrong: boundedString(target.wrong ?? "", `${label}.targets[${n}].wrong`, 300),
+        right: boundedString(target.right ?? "", `${label}.targets[${n}].right`, 300),
+        why: boundedString(target.why ?? "", `${label}.targets[${n}].why`, 500),
+      };
+    }),
+  };
+  if (value.taskId != null) clean.taskId = boundedString(value.taskId, `${label}.taskId`, BACKUP_LIMITS.id, false);
+  if (value.doneAt != null) clean.doneAt = isoDate(value.doneAt, `${label}.doneAt`);
+  if (value.results != null) {
+    if (!Array.isArray(value.results) || value.results.length > 3 || value.results.some((r) => typeof r !== "boolean")) failBackup(`${label}.results geçersiz`);
+    clean.results = [...value.results];
+  }
+  return clean;
 }
 
 export function validateBackup(input) {
@@ -1503,6 +1672,7 @@ export function validateBackup(input) {
     startDate: dateKey(value.profile.startDate, "profile.startDate"),
     targetBand: boundedString(value.profile.targetBand, "profile.targetBand", 30),
     planEnd: value.profile.planEnd ? dateKey(value.profile.planEnd, "profile.planEnd") : "",
+    extras: optionalBoolean(value.profile.extras, "profile.extras"),
   };
   if (!TARGET_BANDS.has(profile.targetBand)) failBackup("profile.targetBand geçersiz");
   const readLessons = [...new Set(value.readLessons.map((id, index) =>
@@ -1530,7 +1700,15 @@ export function validateBackup(input) {
     examLog: sanitizeOptionalArray(value.examLog, "examLog", EXAM_LOG_LIMIT, sanitizeExamEntry),
     learned: sanitizeLearned(value.learned),
     daily: sanitizeDaily(value.daily),
+    fills: sanitizeRecordMap(value.fills ?? {}, "fills", sanitizeFill),
+    transfers: sanitizeOptionalArray(value.transfers, "transfers", TRANSFER_LIMIT, sanitizeTransfer),
   };
+}
+
+function optionalBoolean(value, label) {
+  if (value == null) return false;
+  if (typeof value !== "boolean") failBackup(`${label} boolean olmalı`);
+  return value;
 }
 
 // ── Tolerant restore ──────────────────────────────────────────────────────
@@ -1554,6 +1732,8 @@ const SALVAGE_LABELS = Object.freeze({
   examLog: "deneme sonucu",
   learned: "öğrenildi işareti",
   daily: "günün antrenman listesi",
+  fills: "tamamlama kaydı",
+  transfers: "yazma aktarım görevi",
 });
 
 /**
@@ -1638,6 +1818,7 @@ export function salvageBackup(input) {
       return band;
     },
     planEnd: (entry) => (entry ? dateKey(entry, "profile.planEnd") : ""),
+    extras: (entry) => optionalBoolean(entry, "profile.extras"),
   };
   for (const [key, sanitize] of Object.entries(profileFields)) {
     try {
@@ -1695,6 +1876,8 @@ export function salvageBackup(input) {
     examLog: list("examLog", sanitizeExamEntry, EXAM_LOG_LIMIT),
     learned: list("learned", (id, index) => boundedString(id, `learned[${index}]`, BACKUP_LIMITS.id, false), LEARNED_LIMIT),
     daily: whole("daily", sanitizeDaily),
+    fills: records("fills", sanitizeFill),
+    transfers: list("transfers", sanitizeTransfer, TRANSFER_LIMIT),
   });
   const dropped = [...counts].map(([field, count]) => ({ field, label: SALVAGE_LABELS[field] ?? field, count }));
   return { state, dropped };

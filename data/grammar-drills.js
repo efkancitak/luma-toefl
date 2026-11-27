@@ -107,7 +107,7 @@ export const DRILLS = Object.freeze({
     m("'The phone is ringing.' — 'I ___ get it.'", ["'m going to", "'ll", "get", "am getting"], 1, "Anlık karar: will."),
     g("Complete: The train ___ (leave) at 6:15 tomorrow. (timetable)", "leaves", "Tarifeli, programlı olay: present simple."),
     g("Complete: This time tomorrow, I ___ (take) the exam.", "will be taking", "Gelecekte belli bir anda süren eylem: future continuous.", ["'ll be taking"]),
-    f("When I will finish, I will call you.", "When I finish, I will call you.", "Zaman bağlacından (when) sonra will kullanılmaz.", ["When I finish, I'll call you."]),
+    f("When I will finish, I will call you.", "When I finish, I will call you.", "Gelecekten söz eden zaman cümlesinde (when, after, as soon as) geniş zaman kullanılır: When I finish. (I don't know when he will come gibi soru/isim cümlesi ayrıdır.)", ["When I finish, I'll call you."]),
   ],
   "G3.6": [
     m("I ___ when the phone rang.", ["slept", "was sleeping", "had slept", "sleep"], 1, "Uzun süren arka plan: past continuous."),
@@ -261,6 +261,11 @@ export const DRILLS = Object.freeze({
     g("Complete: This method is ___ (effective) than the old one.", "more effective", "Uzun sıfat: more + sıfat."),
     g("Complete: Today is the ___ (bad) day of the year.", "worst", "bad → worse → worst."),
     f("My room is more bigger than yours.", "My room is bigger than yours.", "more ile -er birlikte kullanılmaz."),
+    m("I don't have ___ free time as last year.", ["as many", "as much", "so many", "much as"], 1, "time sayılamaz: as much + isim + as."),
+    m("We need ___ volunteers as we can find.", ["as much", "so much", "as many", "many as"], 2, "volunteers sayılabilir çoğul: as many + isim + as."),
+    g("Complete: Please call me as ___ as you arrive. (-er -mez)", "soon", "as soon as: … olur olmaz."),
+    f("I will text you as soon as I will land.", "I will text you as soon as I land.", "Gelecekten söz ederken as soon as'tan sonra geniş zaman: as soon as I land."),
+    m("The second test was not ___ difficult as the first one.", ["than", "as", "more", "so much"], 1, "not as + sıfat + as: …kadar değil."),
   ],
   "G8.2": [
     m("The ___ you practice, the better you get.", ["more", "most", "much", "many"], 0, "The more …, the better …"),

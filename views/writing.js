@@ -8,13 +8,13 @@ import { DECK } from "../data/vocab.js";
 import { bandsList, framesCompact } from "./skills.js";
 
 const ACADEMIC = [...new Set(DECK.filter((card) => !card.word.includes(" ") && ["B2", "C1", "C2"].includes(card.level)).map((card) => card.word.toLowerCase()))];
-const STATUS = { ok: ["✓", "Karşılandı"], warn: ["!", "Geliştir"], miss: ["✗", "Eksik"] };
+const STATUS = { ok: ["✓", "Karşılandı"], warn: ["!", "Geliştir"], miss: ["✗", "Olası eksik"], check: ["?", "Kendin kontrol et"] };
 
 export const isWritingLoop = (item) => item?.type === "writing" && ["email", "discussion"].includes(item.taskType);
 export const writingTarget = (item) => (item.taskType === "email" ? 80 : 100);
 
 export function analysisFor(item, d) {
-  return analyzeWriting(String(d.response ?? ""), { kind: item.taskType, target: writingTarget(item), academic: ACADEMIC });
+  return analyzeWriting(String(d.response ?? ""), { kind: item.taskType, target: writingTarget(item), academic: ACADEMIC, prompt: item.prompt });
 }
 
 function diffView(original, improved) {
@@ -53,12 +53,12 @@ export function writingTask(ctx, item, answered, d) {
   const reqs = new Set(d.reqs ?? []);
   const issues = report.issues;
   const warnings = report.warnings;
-  const missing = report.criteria.flatMap((c) => c.notes.filter((n) => n.startsWith("Eksik:")));
+  const missing = report.criteria.flatMap((c) => c.notes.filter((n) => n.startsWith("Olası eksik:")).map((n) => n.replace(/ Başka bir yapıyla yazdıysan sorun yok\.$/u, "")));
   const template = repeatTemplate(improved);
   const typed = Array.isArray(d.repeat) ? d.repeat : [];
   const blanks = template.filter((part) => part.type === "blank");
   return `<div class="w-original"><span class="eyebrow muted">METNİN · ${report.words} kelime</span><div class="model" lang="en">${e(d.response || "")}</div>${answered ? "" : '<button class="text-button" data-action="w-edit">Metnime dön ve düzelt</button>'}</div>
-  <section class="card w-block"><div class="w-head"><span class="w-num">1</span><div><h3>Değerlendir</h3><small class="muted">TOEFL yazma ölçütlerine göre · resmî puan değildir</small></div></div>
+  <section class="card w-block"><div class="w-head"><span class="w-num">1</span><div><h3>Değerlendir</h3><small class="muted">otomatik kontrol · olası ipuçları, puan değildir</small></div></div>
   <div class="criteria-grid">${report.criteria.map((c) => `<div class="criterion ${c.status}"><div class="row between"><strong>${e(c.label)}</strong><span class="status-pill ${c.status}" title="${STATUS[c.status][1]}">${STATUS[c.status][0]} ${STATUS[c.status][1]}</span></div><small class="muted">${e(c.sub)}</small><ul>${c.notes.map((n) => `<li>${e(n)}</li>`).join("")}</ul></div>`).join("")}</div>
   <h4 class="spaced">Görevin maddeleri · karşıladıklarını işaretle</h4><div class="req-list">${item.checklist.map((line, i) => `<button class="req ${reqs.has(i) ? "on" : ""}" data-action="w-req" data-value="${i}" aria-pressed="${reqs.has(i)}">${icon(reqs.has(i) ? "check" : "close")}<span>${e(line)}</span></button>`).join("")}</div>
   ${reqs.size < item.checklist.length ? `<p class="small muted">${item.checklist.length - reqs.size} madde işaretsiz. Eksik madde rubrikte en pahalı hatadır; Geliştir adımında ekle.</p>` : '<p class="small ok-text">Bütün maddeler karşılandı.</p>'}
@@ -67,7 +67,7 @@ export function writingTask(ctx, item, answered, d) {
   ${issues.length || warnings.length ? `${issues.slice(0, 3).map(issueRow).join("")}${warnings.slice(0, Math.max(0, 3 - Math.min(3, issues.length))).map(issueRow).join("")}${issues.length + warnings.length > 3 ? `<details class="spaced"><summary class="model-summary">Diğer ${issues.length + warnings.length - 3} not</summary>${[...issues.slice(3), ...warnings.slice(Math.max(0, 3 - Math.min(3, issues.length)))].map(issueRow).join("")}</details>` : ""}` : '<p class="small">Kesin bir hata bulunmadı. Uygulama yalnız emin olduğu hataları gösterir; cümle yapısını Geliştir adımında kendin de oku.</p>'}
   </section>
   <section class="card w-block"><div class="w-head"><span class="w-num">3</span><div><h3>Geliştir</h3><small class="muted">fikrini ve kelimelerini koru; düzelt ve eksikleri ekle</small></div></div>
-  <p class="small">Aşağıdaki metne kesin düzeltmeler uygulandı. ${missing.length ? `Ekle: ${missing.map((m) => e(m.replace(/^Eksik: /u, ""))).join(" · ")}.` : "Yapıyı ve bağlaçları zenginleştir."} AI'dan geliştirilmiş bir metin aldıysan buraya yapıştırabilirsin.</p>
+  <p class="small">Aşağıdaki metne kesin düzeltmeler uygulandı. ${missing.length ? `Ekle: ${missing.map((m) => e(m.replace(/^Olası eksik: /u, "").replace(/\.$/u, ""))).join(" · ")}.` : "Yapıyı ve bağlaçları zenginleştir."} AI'dan geliştirilmiş bir metin aldıysan buraya yapıştırabilirsin.</p>
   <textarea id="writing-improved" class="improved" lang="en" maxlength="12000" spellcheck="false" autocomplete="off" aria-label="Geliştirilmiş metin">${e(improved)}</textarea>
   <div class="row wrap spaced"><button class="btn small" data-action="w-diff">${ctx.ui.wDiff === item.id ? "Karşılaştırmayı gizle" : "Yan yana karşılaştır"}</button><button class="btn small secondary" data-action="w-reset-improved">Düzeltilmiş hâle döndür</button><button class="btn small secondary" data-action="copy-writing">${icon("copy")} AI istemini kopyala</button></div>
   <div id="w-diff">${ctx.ui.wDiff === item.id ? diffView(d.response || "", improved) : ""}</div>

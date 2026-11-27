@@ -11,7 +11,7 @@ import { LINKERS, LINK_FUNCTIONS } from "./toolkit.js";
 import { AWL_SUBLISTS } from "./awl.js";
 
 // The study deck starts at B1 (v0.6): A1–A2 cards were removed at the learner's request.
-export const LEVEL_ORDER = Object.freeze(["B1", "B2", "C1", "C2"]);
+export const LEVEL_ORDER = Object.freeze(["A2", "B1", "B2", "C1", "C2"]);
 export const TOPICS = Object.freeze({
   biology: "Biyoloji ve ekoloji",
   earth: "Yer bilimi ve iklim",
@@ -87,12 +87,13 @@ function buildDeck() {
   for (const row of PHRASAL) {
     const [expression, , priority, senses] = row;
     const existing = byWord.get(expression);
+    // priority: the source file's editorial study order (1 first); 3 goes to the optional extra pool.
     if (existing) {
-      Object.assign(existing, { pos: "pv", topicKey: "phrasal", phrasal: phrasalDetails(row) });
+      Object.assign(existing, { pos: "pv", topicKey: "phrasal", phrasal: phrasalDetails(row), priority });
       continue;
     }
     const level = PRIORITY_LEVEL[priority];
-    const card = { id: `pv-${row[1]}`, word: expression, level, pos: "pv", partOfSpeech: "pv", meaning: phrasalMeaning(senses), example: senses[0][3], definition: "", collocations: [], family: [], topic: "phrasal", topicKey: "phrasal", rich: false, phrasal: phrasalDetails(row) };
+    const card = { id: `pv-${row[1]}`, word: expression, level, pos: "pv", partOfSpeech: "pv", meaning: phrasalMeaning(senses), example: senses[0][3], definition: "", collocations: [], family: [], topic: "phrasal", topicKey: "phrasal", rich: false, phrasal: phrasalDetails(row), priority };
     cards.push(card);
     byWord.set(expression, card);
   }

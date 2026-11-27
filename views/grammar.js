@@ -1,7 +1,7 @@
 // Grammar map, two-layer lesson reader (Özet + Tam anlatım), module screening
 // and the different-day review queue.
 
-import { gradeLessonItem, noteLessonMistake, scheduleGrammarReview, dueGrammarCodes, LESSON_TEXT_LIMIT } from "../core.js";
+import { gradeLessonItem, noteLessonMistake, scheduleGrammarReview, scheduleLessonCheck, dueGrammarCodes, LESSON_TEXT_LIMIT } from "../core.js";
 import { LESSONS, LESSON_BY_CODE, MODULES, TASK_LABELS, FULL_SCREENS, LEGACY_TO_CODE, summaryBlocks, lessonChecks, screeningFor, GRAMMAR_META } from "../data/grammar.js";
 import { e, icon, head, LEVELS, levelInRange } from "../ui.js";
 import { PARTICLES } from "../data/phrasal.js";
@@ -19,6 +19,9 @@ function programSection(ctx) {
   const done = PROGRAM.filter((lesson) => lessonDoneIn(ctx, lesson.code)).length;
   const next = PROGRAM.find((lesson) => !lessonDoneIn(ctx, lesson.code));
   const pct = Math.round((done / PROGRAM.length) * 100);
+  const levels = PROGRAM.map((lesson) => lessonLevel(ctx, lesson.code));
+  const count = (key) => levels.filter((level) => level === key).length;
+  const levelLine = `<p class="small muted">Görüldü ${count("seen") + count("practised") + count("verified")} · çalışıldı (%60+ doğru) ${count("practised") + count("verified")} · farklı günde doğrulandı ${count("verified")}. Görmek öğrenmek demek değil: doğru cevaplanan dersler de birkaç gün sonra yeni cümlelerle kontrol edilir.</p>`;
   const stages = Object.keys(RANK).map((level) => {
     const lessons = PROGRAM.filter((lesson) => startLevel(lesson) === level);
     if (!lessons.length) return "";
@@ -26,7 +29,7 @@ function programSection(ctx) {
     const current = next && startLevel(next) === level;
     return `<details class="stage ${current ? "current" : ""}" ${current ? "open" : ""}><summary><span class="stage-level">${level}</span><span class="stage-main"><span class="meter" aria-hidden="true"><i style="width:${Math.round((stageDone / lessons.length) * 100)}%"></i></span><small>${stageDone}/${lessons.length} ders</small></span></summary><div class="lesson-rows">${lessons.map((lesson) => lessonRow(ctx, lesson)).join("")}</div></details>`;
   }).join("");
-  return `<section class="card program-card"><span class="eyebrow muted">GRAMER PROGRAMI · A1 → C2</span><h2>${done} / ${PROGRAM.length} ders tamam</h2><div class="meter big" aria-hidden="true"><i style="width:${pct}%"></i></div>${next ? `<a class="btn big wide" href="#lesson/${e(next.code)}">Sıradaki ders: ${e(next.code)} · ${e(next.title)} ${icon("arrow")}</a>` : '<p class="ok-text">Programın bütün dersleri tamam. Tekrarlar farklı günlerde gelmeye devam eder.</p>'}<p class="small muted">Her ders anlatım + alıştırmadır; yanlışlar farklı günde yeni cümleyle geri gelir. Antrenman her gün bu sıradan ders verir.</p><div class="stages">${stages}</div></section>
+  return `<section class="card program-card"><span class="eyebrow muted">GRAMER PROGRAMI · A1 → C2</span><h2>${done} / ${PROGRAM.length} ders görüldü</h2><div class="meter big" aria-hidden="true"><i style="width:${pct}%"></i></div>${levelLine}${next ? `<a class="btn big wide" href="#lesson/${e(next.code)}">Sıradaki ders: ${e(next.code)} · ${e(next.title)} ${icon("arrow")}</a>` : '<p class="ok-text">Programın bütün dersleri tamam. Tekrarlar farklı günlerde gelmeye devam eder.</p>'}<p class="small muted">Her ders anlatım + alıştırmadır; yanlışlar farklı günde yeni cümleyle geri gelir. Antrenman her gün bu sıradan ders verir.</p><div class="stages">${stages}</div></section>
   <div class="section-title"><h2>Başvuru tabloları</h2><span class="small muted">kuralların hepsi bir bakışta</span></div>
   <div class="tool-grid">${GRAMMAR_REFS.map((ref) => `<a class="tool-tile" href="#ref/${e(ref.id)}">${icon("layers")}<strong>${e(ref.title)}</strong><small>${ref.rows.length} satır</small></a>`).join("")}</div>`;
 }
@@ -65,14 +68,33 @@ export function legacyRedirect(id) {
   return LEGACY_TO_CODE[id] ?? null;
 }
 
+/**
+ * v0.9: where a lesson stands. "seen" (opened, summary read or every item
+ * answered), "practised" (60 %+ of its practice answered right), "verified"
+ * (right again on a later day, in new sentences). Reading or clicking alone
+ * never counts as learned.
+ */
+export const LESSON_LEVELS = Object.freeze({ new: "yeni", seen: "görüldü", practised: "çalışıldı", verified: "farklı günde doğrulandı" });
+export function lessonLevel(ctx, code) {
+  const progress = lp(ctx, code);
+  const review = ctx.state.grammarReviews[code];
+  if (review?.successes) return "verified";
+  const results = Object.values(progress?.results ?? {});
+  const right = results.filter((r) => r === "correct").length;
+  if (results.length && right / results.length >= 0.6 && (progress?.readAt || progress?.completedAt)) return "practised";
+  if (progress?.readAt || progress?.completedAt || progress?.screen > 0 || results.length) return "seen";
+  return "new";
+}
+
 export function lessonStatus(ctx, lesson) {
   const progress = lp(ctx, lesson.code);
   const review = ctx.state.grammarReviews[lesson.code];
   const due = review && review.dueAt <= now().toISOString();
   const parts = [];
-  if (progress?.completedAt) parts.push("✓ tamamlandı");
+  const level = lessonLevel(ctx, lesson.code);
+  if (level !== "new") parts.push(LESSON_LEVELS[level]);
+  if (progress?.completedAt) parts.push("ekranlar bitti");
   else if (progress?.layer === "full" && progress.screen > 0) parts.push(`ekran ${progress.screen + 1}/${FULL_SCREENS.length}`);
-  else if (progress?.readAt) parts.push("✓ Özet okundu");
   if (review?.successes) parts.push(`${review.successes} farklı günde doğru`);
   return { text: parts.join(" · "), due };
 }
@@ -422,6 +444,7 @@ export function handleGrammarAction(ctx, action, button) {
     case "lesson-done": {
       const progress = ensureProgress(ctx, code);
       progress.completedAt ??= now().toISOString();
+      state.grammarReviews[code] = scheduleLessonCheck(state.grammarReviews[code]);
       touch(progress);
       ctx.activity("grammar");
       ctx.persist();
@@ -433,6 +456,7 @@ export function handleGrammarAction(ctx, action, button) {
       const lesson = LESSON_BY_CODE.get(code);
       const progress = state.lessonProgress[code] ?? (state.lessonProgress[code] = { layer: "summary", screen: 0, answers: {}, results: {}, updatedAt: now().toISOString() });
       progress.readAt ??= now().toISOString();
+      state.grammarReviews[code] = scheduleLessonCheck(state.grammarReviews[code]);
       touch(progress);
       for (const id of lesson.legacy) if (!state.readLessons.includes(id)) state.readLessons.push(id);
       ctx.activity("grammar");
@@ -488,7 +512,11 @@ export function handleGrammarAction(ctx, action, button) {
       const owner = LESSON_BY_CODE.get(code);
       if (!owner?.full && owner?.drills.length && owner.drills.every((d) => progress.results[d.id]) && !progress.readAt) {
         progress.readAt = now().toISOString();
-        ctx.toast("Ders tamamlandı: anlatım ve alıştırmalar bitti.");
+        state.grammarReviews[code] = scheduleLessonCheck(state.grammarReviews[code]);
+        const right = owner.drills.filter((d) => progress.results[d.id] === "correct").length;
+        ctx.toast(right / owner.drills.length >= 0.6
+          ? `Ders görüldü ve çalışıldı (${right}/${owner.drills.length} doğru). Birkaç gün sonra yeni cümlelerle kontrol edilecek.`
+          : `Ders görüldü ama ${right}/${owner.drills.length} doğru: henüz öğrenildi sayılmaz. Yarın yeni cümlelerle tekrar gelecek.`);
       }
       touch(progress);
       ctx.activity("grammar");

@@ -23,7 +23,7 @@ export const FULL_LESSONS_B = {
       pairs: [["If I see Ali, I'll tell him.", "Görebilirim de görmeyebilirim de"], ["When I see Ali, I'll tell him.", "Onu göreceğim; o zaman söyleyeceğim"]],
     },
     mistakes: [
-      ["If I will have time, I will help.", "If I have time, I will help.", "if kısmında will kullanılmaz."],
+      ["If I will have time, I will help.", "If I have time, I will help.", "Gelecekteki bir koşulda if kısmı geniş zamandır. (If you will / would … ile istek ve nezaket bildirmek ayrı, doğru bir kullanımdır.)"],
       ["Unless you don't hurry, you'll be late.", "Unless you hurry, you'll be late.", "unless zaten olumsuz anlam taşır."],
       ["If you will need help, ask me.", "If you need help, ask me.", "Koşul kısmı present simple ile kurulur."],
     ],
@@ -48,7 +48,7 @@ export const FULL_LESSONS_B = {
     ],
     exam: "Take an Interview'daki plan ve tercih sorularında (What will you do if…?) bu yapı doğrudan gerekir. Write an Email'de 'If you need any further information, please let me know' gibi kalıplar sık kullanılır.",
     speaking: { pattern: "If I have the chance, I'll…", model: "If I have the chance, I'll study abroad for a semester.", step: "Kalıbı kendi planınla üç kez söyle; if kısmından sonra kısa bir duraklama yap." },
-    recap: ["if kısmında will kullanılmaz: If I have time…", "Zero: genel gerçek (present + present). First: gerçek olasılık (present + will).", "unless = if not; when = olacağından eminsin."],
+    recap: ["Gelecek koşulunda if kısmında will yok: If I have time… (istek/nezaket istisnası: If you will wait…)", "Zero: genel gerçek (present + present). First: gerçek olasılık (present + will).", "unless = if not; when = olacağından eminsin."],
   }),
 
   "G5.2": F("G5.2", {

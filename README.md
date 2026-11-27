@@ -1,4 +1,4 @@
-# Luma — kişisel çalışma alanı (v0.8)
+# Luma — kişisel çalışma alanı (v0.9.1)
 
 iPhone öncelikli, çevrimdışı metin çalışmasını destekleyen, tek kullanıcılı TOEFL® hazırlık PWA'sı. Hedef tarih varsayılan olarak 15 Ocak 2027; Ayarlar'dan değişir. ETS ile bağlantılı veya ETS tarafından onaylanmış değildir.
 
@@ -60,7 +60,35 @@ git add -A && git commit -m "…" && git push
 
 `npm run release`, service worker'a önbelleğe alınan dosyaların parmak izini (`BUILD`) yazar. İçerik veya kod değiştiğinde damga değişir; telefon yeni sürümü arka planda indirir ve üstte **Güncelle** bildirimi gösterir. Bildirime dokununca çalışman kaydedilir ve HTML, JS ve içerik birlikte yenilenir. Damgayı yenilemeden pushlarsan telefon eski sürümde kalır; `npm test` bu durumu yakalar. Ayarlar → **Güncellemeyi denetle** ile elle de bakabilirsin.
 
-## v0.8'de yeni: günlük antrenman, beş sekme, yazma döngüsü
+## Güncel envanter (v0.9)
+
+Bu bölüm tek güncel sayım kaynağıdır; aşağıdaki "v0.x'te yeni" bölümleri tarihsel kayıttır ve o sürümün sayılarını gösterir.
+
+- **Kelime ve kalıp destesi:** 2.156 kart. Kelimeler A2 150 · B1 317 · B2 493 · C1 377 · C2 153; 554 öbek fiil (öncelik 1: 251, 2: 264, 3: 39); 55 kalıp; 57 bağlaç. Ayrıca 134 konuşma ifadesi ve 33 temel ifade için 181 günlük alternatif (kart kimlikleri; farklı kelime sayısı değildir).
+- **Reading:** 24 Complete the Words metni; 8 günlük metin (2–3 soru) ve 8 akademik pasaj (~200 kelime, 5 soru).
+- **Listening:** 8 Choose a Response; 8 konuşma ve 8 duyuru (2'şer soru); 8 akademik konuşma (4 soru). Toplam 40 metin/kayıt kümesinde 126 soru; her şıkkın gerekçesi var. 5 küme ölçüm için ayrılmıştır.
+- **Writing:** 22 Build a Sentence (bağlam + çerçeve + bir fazla parça), 7 e-posta, 7 akademik tartışma.
+- **Speaking:** 4 Listen and Repeat, 4 Interview alıştırması ve 12 prova seti.
+- **Gramer:** 90 ders (21'i Tam anlatım), 368 ek alıştırma, 6 başvuru tablosu.
+
+## v0.9'da yeni: inceleme raporu düzeltmeleri
+
+- **Yazma koçu doğru metni bozmuyor (F15):** STEM, CEO, COVID gibi kısaltmalar korunur (yalnız bütünüyle büyük harfle yazılmış satır düzeltilir); İngiliz yazımı (apologise, honour) kabul edilir; an x-ray, married with two children korunur; since two years ago → for two years; look forward to seeing; discussed about ve a honour yakalanır.
+- **Değerlendirme dürüst (F16–F17):** görüş belirli kalıplara bağlı değil (should, is better, I expect … da görüş sayılır); bulunmayan şey "olası eksik" olarak gösterilir; hata bulunmadığında yeşil rozet yerine "kendin kontrol et" çıkar; he/she/it + yalın fiil (She go) uyarılır. Bütün örnek cevaplar hedef uzunlukta ve kendi kontrolünden geçiyor.
+- **Günlük plan (F01–F03, F22):** bitiş tarihi sınav günü (15 Ocak). Yeni kart toplam 30; zamanı gelen tekrar 40'ı geçince azalır (80'de 20, 140'ta 0) ve kaçırılan günler yükü artırmaz. Liste bir öneri: "10 yeni kart daha" ile devam edilir. Önce AWL ve konu kelimeleri, öncelik 1 sonra 2 öbek fiiller; C2 akademik (AWL dışı) kelimeler ve öncelik 3 öbek fiiller **ek havuzda**, Antrenman ekranından plana eklenebilir. A2 kelimeler geri geldi (A1 yok) ve listeye serpiştirilir. Gramer dersleri ve beceri görevleri kalan günlere bölünür; zayıf beceriye (Reading/Listening doğruluğu 10 puan düşükse) +1 görev ve "Neden bu liste?" açıklaması.
+- **Yazarak tamamlama (F04–F05):** günün kartlarından sonra şıksız tur: kartın örnek cümlesinde kelimenin son kısmı gizli (ter____), çekimli biçim (carried out) ve ayrılmış öbek fiiller (turn … off) ayrı boşluk. İpucu anlam ve harf açar; ipuçlu, bağımsız ve yanlış ayrı kaydedilir. Kart şıkları her çalışma oturumunda yeniden karışır.
+- **Yeniden öğren (F07):** bugün yanlış yapılan kartlar aynı gün Antrenman'da ayrı adım olarak geri gelir; doğru cevaplanınca çıkar.
+- **Soru setleri (F08–F09, F12–F13):** her metin ve kayıt resmî görev planındaki kadar soru taşır; yanlış seçilen şık için ayrı gerekçe, kanıt ve beceri etiketi (ayrıntı, çıkarım, amaç, kelime …). Kolay elenen şıklar yeniden yazıldı; "en uzun şıkkı seç" taktiği %21'de kalıyor. Dinlemede **Sınav akışı** (ses bir kez, sorular sonra ve tek tek, geri dönüş yok) ve **Öğrenme** modu (tekrar dinleme ve metin, yardımlı sayılır).
+- **Sınav süreleri:** Reading, Listening, Writing ve Speaking görevleri ETS bölüm ortalamalarıyla süreli ve sayaç kendiliğinden başlar (madde başına Reading 36 sn, Listening 37 sn, Build a Sentence 36 sn; e-posta 7 dk, tartışma 10 dk, mülakat 45 sn). Dinlemede süre sesle başlar. Süre bitince cevap 10 saniyede bir parça açılır (boşlukta bir harf, şıklarda bir yanlış şık söner); sonra verilen cevap yardımlı sayılır.
+- **Build a Sentence (F10):** kısa bir konuşma satırı, sabit kelimeli cevap çerçevesi ve bir fazla parça; 22 madde, her birinin tek doğru dizilimi test edilir.
+- **Ölçüm ve hata türleri (F11, F13):** 5 görülmemiş küme Rotam → Ölçüm seti'nde; alıştırma ve Antrenman'da çıkmaz, yalnız ilk çözüm sayılır. Rotam'da hata türleri ve "yeni sorularla çalış".
+- **Aktarım yazısı (F18):** yazma döngüsünde düzeltilen en fazla üç yapı ertesi gün farklı bir görevde hedef olarak verilir; yazıda yeniden hata olup olmadığı kaydedilir. Tekrar adımındaki karşılaştırma yalnız kelime farkını gösterir.
+- **Konuşma (F19–F20):** 45 saniyede 110 kelime hedefi kaldırıldı; kelime sayısı yalnız bilgi. Tonlama noktalamaya değil anlama göre anlatılıyor; "5 ile 4 arasındaki fark bağlaçlardır" ifadesi düzeltildi.
+- **Gramer ilerlemesi (F22):** dersler "görüldü · çalışıldı (%60+ doğru) · farklı günde doğrulandı" diye ayrılır; doğru biten dersler de üç gün sonra yeni cümlelerle kontrol edilir.
+- **as ile kurulan kalıplar (v0.9.1):** G8.1'e tablo (as … as, not as … as, as much / as many … as, as … as possible, as soon as, as long as, as far as, as well as, as if, such as) ve 5 alıştırma; as soon as, as much as, as many as, as if, as … as possible kart oldu (as far as I know, as long as ve as well as zaten vardı).
+- **Kurallar (F24–F25):** if + will istisnası (If you will wait …), the table's leg "yanlış" değil "daha az doğal", I see what you mean "anlıyorum" grubunda, very good notu; duyurudaki saatler kesin (11:59 p.m. – 6:00 a.m.).
+
+## v0.8'de yeni (tarihsel): günlük antrenman, beş sekme, yazma döngüsü
 
 - **Antrenman (ana ekran):** her gün açılan tek liste ve **Başla** düğmesi. Bütün içerik (kelimeler, öbek fiiller, kalıp/bağlaç/ifadeler, 83 gramer dersi, Reading, Listening, Writing, Speaking görevleri ve prova setleri) bir bitiş tarihine kadar günlere bölünür: her havuzun kalanı kalan günlere bölünür ve yukarı yuvarlanır (`dailyQuota`), böylece bitiş tarihinde her şey bir kez çalışılmış olur; atlanan günün payı kalan günlere dağılır. Bitiş tarihi Ayarlar'dan değişir (varsayılan: sınavdan 31 gün önce, 15 Aralık). Listede ayrıca zamanı gelen kart tekrarı, hata tekrarı ve gramer tekrarı var. Bir adım bitince “Antrenmana devam” sıradakini açar; hepsi bitince gün tamamlanır.
 - **Sekmeler:** Antrenman · Reading · Listening · Speaking · Writing · Gramer. Her beceri sekmesinde bölümün puanlanması, bütün set, her görevin puanlama rehberi (ölçülen, puanlama, yap / kaçın, süre; Email, Discussion, Interview ve Listen and Repeat için 0–5 bant özetleri, `data/scoring.js`) ve o beceriye ait araçlar. Rotam sol menüde ve Antrenman ekranının altında.
@@ -125,10 +153,9 @@ Kullanıcının `phrasal-verbs-tek-dosya.json` dosyasındaki 554 ifade ve 704 an
 - Tam setler: karışık, tek beceri veya tek görev türü; A1'den C2'ye, kaldığın yerden.
 - Yanıtlar ve yazma taslakları için yerel kayıt; seti bırakarak devam etme.
 - Dört beceri ve yeni sınavın 12 görev türüne göre filtreleme.
-- 90 özgün mikro alıştırma: 24 Reading, 32 Listening, 26 Writing, 8 Speaking (v0.2'de 48).
-- 180 kelime/tamlama kartı (v0.2'de 126) ve 48 konuşma ifadesi; 69 dersin Özeti (36 v0.1 mikro dersi Özet olarak eşlendi); A1–C2 etiketleri.
+- Güncel içerik miktarları yukarıdaki **Güncel envanter** bölümündedir.
 - Aktif hatırlama, hatırlama zorluğuna göre tekrar tarihi.
-- Görev sayacı, sesli okuma, mikrofon kaydı, geri dinleme/indirme.
+- Sınav süreli görev sayacı, sesli okuma, mikrofon kaydı, geri dinleme/indirme.
 - Writing/Speaking kontrol listeleri ve öz değerlendirme; örnek yaklaşımlar.
 - Sekiz haftalık çalışma omurgası, beceri istatistikleri ve yanlışları yeniden çalışma.
 - İlerleme JSON yedeği, doğrulanmış geri yükleme ve resmî kaynak bağlantıları.
@@ -138,21 +165,24 @@ Kullanıcının `phrasal-verbs-tek-dosya.json` dosyasındaki 554 ifade ve 704 an
 - Başlangıç bankasıdır; iki aylık tam müfredat veya eksiksiz A1–C2 kursu değildir. Bankanın genişletilmesi ve dil uzmanı kontrolü gerekir.
 - Cevap anahtarlı alıştırmalarda doğruluk hesaplanır. Speaking/Writing serbest üretim otomatik puanlanmaz; öz değerlendirme saklanır. TOEFL puanı tahmini ve resmî CEFR seviye tespiti yoktur.
 - R/L öneri seçimi öğretici bir yerel algoritmadır; ETS'nin çok aşamalı adaptif testi veya puanlama sistemi değildir.
-- Sayaçlı mikro pratik tam sınav simülasyonu değildir. Gerçek sınavda burada sunulan duraklatma/yeniden dinleme olanakları geçerli olmayabilir. Son aşamada ETS kaynaklarıyla bilgisayarda çalışılmalıdır.
+- Süreler ETS bölüm ortalamalarından türetilmiştir; uyarlamalı sınavda görev süresi biraz değişebilir. Bu tam sınav simülasyonu değildir; son aşamada ETS kaynaklarıyla bilgisayarda çalışılmalıdır.
 - Dinleme cihaz TTS'si kullanır; doğal konuşmacı çeşitliliği ve bağımsız sesli değerlendirme gelecek işlerdir.
 - Bulut backend, otomatik cihaz eşitlemesi, bildirim servisi veya AI API aktif değildir. Dış geri bildirim istemleri yalnız panoya kopyalanır; uygulama veri göndermez.
-- Uygulama telaffuz puanı vermez; dikte tanıma hatası telaffuz hatası sayılmaz. 49 dersin Tam anlatımı planlandı.
+- Uygulama telaffuz puanı vermez; dikte tanıma hatası telaffuz hatası sayılmaz.
+- Yazma koçu bir öğretmen değildir: yalnız yazım ve sık kalıp hatalarını görür; anlam, gerekçe ve ton için kendi kontrolün ve dış geri bildirim gerekir. İçerik bir dil uzmanınca gözden geçirilmedi.
 - JSON yedek ses dosyalarını içermez. Sesler Rotam veya ilgili soru ekranından ayrı indirilebilir.
 
 ## Veri ve dosya yapısı
 
-`app.js` kabuk, yönlendirme ve genel ekranlar; `views/grammar.js` dil bilgisi haritası, ders okuyucu, tarama ve tekrar; `views/speaking.js` konuşma merkezi, set oynatıcı ve telaffuz dersleri; `media.js` cihaz TTS'si ve mikrofon kaydı; `ui.js` ortak görünüm yardımcıları; `core.js` saf öğrenme kuralları (puanlama, dikte karşılaştırması, tekrar planı, haftalık özet, öneri, yedek doğrulama); `storage.js` yerel kayıt/IndexedDB ses deposu. Veri: `data/content.js` sınav biçimi ve 48 alıştırma; `data/library.js` kelimeler ve 36 v0.1 mikro dersi; `data/grammar.js` 69 derslik harita, Özetler, taramalar ve etiket eşlemesi; `data/grammar-full-1.js` / `-2.js` öncelikli 20 dersin Tam anlatımı; `data/speaking.js` konuşma setleri, ifade bankası, telaffuz dersleri ve istemler. `sw.js` sürümlü uygulama önbelleğidir. Yeni kod/içerik yayımlarken service worker `VERSION` değerini artır. Devam eden oturuma zorla yeni sürüm uygulanmaz; tüm uygulama sekmelerini kapatıp yeniden açmak yeni sürümü etkinleştirir.
+`app.js` kabuk, yönlendirme ve genel ekranlar; `views/grammar.js` dil bilgisi haritası, ders okuyucu, tarama ve tekrar; `views/speaking.js` konuşma merkezi, set oynatıcı ve telaffuz dersleri; `media.js` cihaz TTS'si ve mikrofon kaydı; `ui.js` ortak görünüm yardımcıları; `core.js` saf öğrenme kuralları (puanlama, dikte karşılaştırması, tekrar planı, haftalık özet, öneri, yedek doğrulama); `storage.js` yerel kayıt/IndexedDB ses deposu. Veri: `data/content.js` sınav biçimi, alıştırmalar ve sınav süreleri (`EXAM_TIMING`); `data/library.js` kelimeler ve 36 v0.1 mikro dersi; `data/grammar.js` 90 derslik harita, Özetler, taramalar ve etiket eşlemesi; `data/grammar-full-1.js` / `-2.js` öncelikli 20 dersin Tam anlatımı; `data/speaking.js` konuşma setleri, ifade bankası, telaffuz dersleri ve istemler. `sw.js` sürümlü uygulama önbelleğidir. Yeni kod/içerik yayımlarken service worker `VERSION` değerini artır. Devam eden oturuma zorla yeni sürüm uygulanmaz; tüm uygulama sekmelerini kapatıp yeniden açmak yeni sürümü etkinleştirir.
 
 v0.8 dosyaları: `writing.js` yazma koçu (kesin düzeltmeler, dört ölçüt, Tekrar şablonu, fark); `views/skills.js` beceri sekmeleri ve araç kutuları; `views/writing.js` yazma döngüsü ekranı; `data/scoring.js` görev ve bölüm puanlama rehberleri; `data/toolkit.js` bağlaçlar, yazma kalıpları, konuşma araç kutusu; `data/expressions.js` 52 kalıp; `data/words-extra.js` AWL ve TOEFL ek kelimeleri; `data/awl.js` AWL başlık listesi; `data/grammar-extra.js` 18 yeni ders ve kullanım tabloları; `data/grammar-drills.js` Özet derslerin alıştırmaları; `data/irregular.js` düzensiz fiiller; `data/grammar-ref.js` başvuru tabloları. Günlük plan matematiği `core.js` içinde (`dailyQuota`, `planDaysLeft`, `spreadMerge`).
 
+v0.9 dosyaları: `fill.js` yazarak tamamlama (cümledeki biçimi bulma, gizleme, puanlama); `data/sets.js` metin ve kayıtların soru setleri, şık gerekçeleri, ölçüm kümeleri; `data/build.js` Build a Sentence çerçeveleri. `core.js` içinde `newCardBudget`, `splitBudget`, `buildResponse`, `noteFill`, `scheduleLessonCheck`.
+
 İlerleme `localStorage`, sesler `IndexedDB` içindedir. İki aylık kişisel metin verisi için bu basit yapı seçildi. Depolama sınırına gelindiğinde kayıt hatası gösterilir. Büyük soru bankası veya cihaz eşitlemesi için metin verisini de IndexedDB/sunucu veri tabanına taşı.
 
-`docs/REQUIREMENTS.md`: ürün ve teknik gereksinimler (v4). `docs/CONTENT-SPEC.md`: içerik sözleşmesi ve ders şablonu. `docs/GRAMMAR.md`: 69 derslik harita ve v0.1 eşleme tablosu. `docs/SOURCES.md`: resmî bağlantılar ve içerik kullanım planı. `docs/REVIEW.md`: v3 → v4 değişiklikleri. v0.1 belgeleri `docs/arsiv-v0.1/` içinde. `THIRD_PARTY_NOTICES.md`: kaynak ve marka açıklaması. Test sonuçları ve gerçek cihaz sınırları `docs/DOGRULAMA.md` içinde.
+`docs/REQUIREMENTS.md`: ürün ve teknik gereksinimler (v4). `docs/CONTENT-SPEC.md`: içerik sözleşmesi ve ders şablonu. `docs/GRAMMAR.md`: ders haritası (v0.8 eklemeleriyle 90 ders) ve v0.1 eşleme tablosu. `docs/SOURCES.md`: resmî bağlantılar ve içerik kullanım planı. `docs/REVIEW.md`: v3 → v4 değişiklikleri. v0.1 belgeleri `docs/arsiv-v0.1/` içinde. `THIRD_PARTY_NOTICES.md`: kaynak ve marka açıklaması. Test sonuçları ve gerçek cihaz sınırları `docs/DOGRULAMA.md` içinde.
 
 ## Yeni içerik ekle
 

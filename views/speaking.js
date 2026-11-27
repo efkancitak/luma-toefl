@@ -12,7 +12,6 @@ const SELF_LABELS = { clarity: "Anlaşılabilirlik", task: "Görevi karşılama"
 const KIND_LABEL = { repeat: "Listen and Repeat", interview: "Take an Interview" };
 
 const runItem = (run, id) => (run.items[id] ||= {});
-const PACE_TARGET = 110;
 
 /** Four-step colour legend. */
 export function stepLegend() {
@@ -24,13 +23,14 @@ export function annotatedModel(item, { listen = true } = {}) {
   if (!item.segments) return `<div class="model" lang="en">${e(item.model)}</div>`;
   const words = item.model.split(/\s+/).filter(Boolean).length;
   const body = item.segments.map(([key, text]) => `<span class="seg step-${key}" title="${e(STEPS[key]?.label ?? "")}">${e(text).replace(/\{([^}]+)\}/g, '<b class="kp">$1</b>')}</span>`).join(" ");
-  return `${stepLegend()}<p class="model annotated" lang="en">${body}</p><p class="small muted">${words} kelime · 45 saniyede söylenebilecek hız (hedef ${PACE_TARGET}+). Kalın yazılanlar başka sorularda da kullanabileceğin kalıplar.</p>${listen ? `<button class="btn small secondary" data-action="say" data-say="${e(item.model)}">${icon("sound")} Örnek cevabı dinle</button>` : ""}`;
+  return `${stepLegend()}<p class="model annotated" lang="en">${body}</p><p class="small muted">${words} kelime · bilgi için; kelime sayısı başarı ölçütü değil. Kalın yazılanlar başka sorularda da kullanabileceğin kalıplar.</p>${listen ? `<button class="btn small secondary" data-action="say" data-say="${e(item.model)}">${icon("sound")} Örnek cevabı dinle</button>` : ""}`;
 }
 
 function paceLine(text) {
   const words = String(text || "").trim().split(/\s+/).filter(Boolean).length;
   if (!words) return "Cevabını dikteyle yazınca kelime sayın burada görünür.";
-  return `${words} kelime · 45 saniyelik bir cevap için hedef ${PACE_TARGET}+${words >= PACE_TARGET ? " ✓" : ` (${PACE_TARGET - words} eksik)`}. Dikte kelime sayısıdır; puan değildir.`;
+  // v0.9: the count is information only; no target, no ✓ or "eksik" (a longer answer is not a better one).
+  return `${words} kelime (dikteden). Bilgi içindir, puan değildir: soruya doğrudan cevap, gerekçe, somut ayrıntı ve anlaşılır, doğal bir hızla sürede bitirmek önemlidir.`;
 }
 const currentSet = (run) => (run ? SET_BY_ID.get(run.setId) : null);
 const currentItem = (run) => currentSet(run)?.items[run.index] ?? null;
@@ -79,7 +79,7 @@ function guideSection() {
   const sample2 = INTERVIEW_SETS.flatMap((set) => set.questions).find((q) => q.id === "int-1-1");
   return `<div class="section-title"><h2>Speaking'de puanı ne belirler?</h2></div>
   <section class="card"><ul class="score-list">${g.scoring.map(([title, text]) => `<li><strong>${e(title)}</strong><span>${e(text)}</span></li>`).join("")}</ul><p class="small muted spaced">ETS'nin Take an Interview puanlama rehberinden özetlendi. Her cevap 0–5 arası puanlanır.</p></section>
-  <div class="section-title"><h2>Hız hedefi: 45 saniyede 110+ kelime</h2></div>
+  <div class="section-title"><h2>Hız ve uzunluk</h2></div>
   <section class="card"><p>${e(g.pace)}</p><p class="small muted spaced">${e(g.scenario)}</p></section>
   <div class="section-title"><h2>Basit tut: 4 adım</h2></div>
   <section class="card">${stepLegend()}<ol class="plan-steps spaced">${ANSWER_PLAN.map((step) => `<li class="step-${e(step.key)}"><strong>${e(step.step)}</strong><span>${e(step.detail)}</span><small>${e(step.seconds)}</small></li>`).join("")}</ol>

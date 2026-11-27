@@ -2,16 +2,16 @@
 // BUILD is the fingerprint of the cached files, written by `npm run release`; a test
 // fails when it is stale. Any change therefore yields a new cache, and all modules
 // below are cached together so HTML, JS and content stay consistent.
-const VERSION = 'v0.8.0';
-const BUILD = '1c95b5591f';
+const VERSION = 'v0.9.1';
+const BUILD = '032a6de51d';
 const PREFIX = `luma:${self.registration.scope}:`;
 const CACHE = `${PREFIX}${VERSION}-${BUILD}`;
 const ASSETS = [
   './', './index.html', './styles.css',
-  './app.js', './core.js', './storage.js', './ui.js', './media.js', './writing.js',
+  './app.js', './core.js', './storage.js', './ui.js', './media.js', './writing.js', './fill.js',
   './views/grammar.js', './views/speaking.js', './views/skills.js', './views/writing.js',
   './data/content.js', './data/library.js', './data/words.js', './data/phrasal.js', './data/vocab.js', './data/grammar.js', './data/grammar-full-1.js', './data/grammar-full-2.js', './data/speaking.js', './data/speaking-models.js',
-  './data/words-extra.js', './data/awl.js', './data/expressions.js', './data/toolkit.js', './data/scoring.js', './data/grammar-extra.js', './data/grammar-drills.js', './data/irregular.js', './data/grammar-ref.js', './data/everyday.js',
+  './data/words-extra.js', './data/awl.js', './data/expressions.js', './data/toolkit.js', './data/scoring.js', './data/grammar-extra.js', './data/grammar-drills.js', './data/irregular.js', './data/sets.js', './data/build.js', './data/grammar-ref.js', './data/everyday.js',
   './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png',
 ];
 const urls = new Set(ASSETS.map(path=>new URL(path,self.registration.scope).href));

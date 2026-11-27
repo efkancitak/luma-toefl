@@ -139,8 +139,8 @@ const LESSON_LIST = [
       q("Choose the correct sentence about a woman named Sara.", ["Sara forgot his keys.", "Sara forgot her keys.", "Sara forgot hers keys.", "Sara forgot herself keys."], 1, "Sara kadın olduğu için iyelik sıfatı her; isimden önce 'hers' değil 'her' gelir."),
     ),
   }),
-  L("G2.7", "İsim tamlaması 1: 's, of ve isim + isim", "A2–B1", [["the table's leg", "the table leg ya da the leg of the table"]], ["CW", "RD"], {
-    checks: [q("Choose the most natural phrase.", ["the table's leg", "the table leg", "the leg's table", "table of leg"], 1, "Cansız nesnelerde 's yerine isim + isim (the table leg) veya of yapısı doğaldır.")],
+  L("G2.7", "İsim tamlaması 1: 's, of ve isim + isim", "A2–B1", [["my brother car", "my brother's car"]], ["CW", "RD"], {
+    checks: [q("Choose the most natural phrase.", ["the table's leg", "the table leg", "the leg's table", "table of leg"], 1, "Cansız nesnelerde isim + isim (the table leg) veya of yapısı daha yaygındır. The table's leg yanlış değildir ama daha az doğaldır; insan ve hayvanda 's kullanılır.")],
   }),
   L("G2.8", "Sıfatlar: sıra, sıfat–zarf ayrımı, -ed/-ing", "A2–B1", [["I am boring in class", "I am bored in class"], ["He speaks very good", "He speaks very well"]], ["INT", "AD"], {
     ozet: ozet(

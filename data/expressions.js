@@ -1,4 +1,4 @@
-// Kalıplar: about fifty of the most used fixed expressions (feel like, be interested
+// Kalıplar: fifty-seven of the most used fixed expressions (feel like, be interested
 // in, take a break, have a look …), level-independent. They are studied like the
 // phrasal verbs: one card each, woven into the vocabulary deck, with the pattern,
 // an example, its Turkish and a usage note on the card back.
@@ -52,6 +52,11 @@ export const EXPRESSIONS = Object.freeze([
   ["be willing to", "...meye istekli olmak", "be willing to + yalın fiil", "I'm willing to work extra hours if needed.", "Gerekirse fazla saat çalışmaya istekliyim.", ""],
   ["be in favor of", "...den yana olmak; desteklemek", "be in favor of + isim / -ing", "I'm in favor of keeping the library open later.", "Kütüphanenin daha geç saate kadar açık kalmasından yanayım.", "İngiliz yazımı: in favour of."],
   ["no matter what", "ne olursa olsun", "no matter what / how / where + yan cümle", "No matter what happens, I review my notes every day.", "Ne olursa olsun notlarımı her gün tekrar ederim.", ""],
+  ["as soon as", "-er -mez; … olur olmaz", "as soon as + cümle", "Call me as soon as you arrive at the station.", "İstasyona varır varmaz beni ara.", "Gelecekten söz ederken arkasından will gelmez: as soon as you arrive. As soon as possible = en kısa sürede."],
+  ["as much as", "… kadar (çok)", "as much + sayılamaz isim + as · as much as + cümle", "I don't have as much free time as I did last year.", "Geçen yılki kadar boş vaktim yok.", "Sayılamaz isimle much, sayılabilir çoğulla many. As much as I can = elimden geldiğince."],
+  ["as many as", "… kadar (çok); … e varan", "as many + çoğul isim + as · as many as + sayı", "We visited as many museums as we could.", "Gidebildiğimiz kadar çok müzeyi gezdik.", "Sayılabilir çoğul isimle. As many as 500 students = 500'e varan öğrenci (sayının büyüklüğünü vurgular)."],
+  ["as if", "…mış gibi", "as if / as though + cümle", "She looked as if she hadn't slept at all.", "Hiç uyumamış gibi görünüyordu.", "Gerçek dışı bir durumda geçmiş zaman kullanılır: He talks as if he knew everything. Günlük dilde like da duyulur."],
+  ["as … as possible", "olabildiğince; mümkün olduğunca", "as + sıfat / zarf + as possible", "Try to make your answer as clear as possible.", "Cevabını olabildiğince açık yap.", "Arada sıfat ya da zarf olur: as soon as possible, as quickly as possible. Yazmada ve e-postada çok kullanılır."],
   ["as far as I know", "bildiğim kadarıyla", "as far as I know, …", "As far as I know, the exam has no scheduled break.", "Bildiğim kadarıyla sınavda planlı bir ara yok.", ""],
   ["in the long run", "uzun vadede", "in the long run, …", "In the long run, regular practice saves time.", "Uzun vadede düzenli pratik zaman kazandırır.", ""],
   ["it's up to", "(birine) kalmış", "it's up to + kişi (to + yalın fiil)", "It's up to you to choose the topic.", "Konuyu seçmek sana kalmış.", ""],

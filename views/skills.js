@@ -4,6 +4,8 @@
 
 import { e, icon, head, SKILLS } from "../ui.js";
 import { exercises, TASK_TYPES, EXAM_SPEC } from "../data/content.js";
+// v0.9: measurement sets stay unseen; they open only from Rotam → Ölçüm seti.
+const PRACTICE = exercises.filter((item) => !item.measure);
 import { buildSet } from "../core.js";
 import { SECTION_GUIDE, TASK_GUIDE, BANDS, SCORE_NOTE } from "../data/scoring.js";
 import { WRITING_FRAMES, LINKERS, LINK_FUNCTIONS, SPEAKING_TOOLKIT, PRACTICE_TIPS } from "../data/toolkit.js";
@@ -34,13 +36,13 @@ export function taskGuide(taskId, { open = false, title = "Nasıl puanlanır · 
 }
 
 function taskCard(ctx, task) {
-  const info = buildSet(exercises, ctx.state.attempts, { skill: task.skill, taskType: task.id });
+  const info = buildSet(PRACTICE, ctx.state.attempts, { skill: task.skill, taskType: task.id });
   const pct = info.total ? Math.round((info.solved / info.total) * 100) : 0;
   return `<section class="card task-card"><div class="row between wrap"><h3 lang="en">${e(task.label)}</h3><span class="small muted">${info.solved}/${info.total} çözüldü</span></div><p class="small">${e(task.description)}</p><div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div><div class="row wrap spaced"><button class="btn small" data-action="task" data-id="${e(task.id)}">${info.repeat ? "Tekrar çöz" : info.solved ? "Devam et" : "Başlat"} ${icon("arrow")}</button></div>${taskGuide(task.id)}</section>`;
 }
 
 function setHero(ctx, skill) {
-  const info = buildSet(exercises, ctx.state.attempts, { skill });
+  const info = buildSet(PRACTICE, ctx.state.attempts, { skill });
   const session = ctx.state.session;
   const o = session?.options || {};
   const open = session && !session.completedAt && session.index < session.itemIds.length && !o.retry && !o.daily && (o.skill ?? "all") === skill && (o.taskType ?? "all") === "all";

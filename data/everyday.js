@@ -109,7 +109,7 @@ export const EVERYDAY = Object.freeze([
     ["Good point.", "iyi bir nokta", "We should ask first. — Good point.", "günlük"],
     ["I couldn't agree more.", "tamamen katılıyorum", "Sleep matters. — I couldn't agree more.", "güçlü"],
     ["You're right.", "haklısın", "You're right, I should have checked.", "günlük"],
-    ["I see what you mean.", "ne demek istediğini anlıyorum", "I see what you mean about the noise.", "yumuşak"],
+    ["I'm with you on that.", "bu konuda seninle aynı fikirdeyim", "Online classes need more breaks. — I'm with you on that.", "günlük"],
   ] },
   { id: "disagree", base: "I disagree / No, …", tr: "katılmıyorum", note: "Doğrudan karşı çıkmak yerine yumuşatarak katılmamak İngilizcede daha doğal.", items: [
     ["I'm not so sure about that.", "bundan pek emin değilim", "It'll be easy. — I'm not so sure about that.", "yumuşak"],
@@ -125,6 +125,7 @@ export const EVERYDAY = Object.freeze([
     ["That makes sense.", "mantıklı", "That makes sense now, thanks.", "günlük"],
     ["I get it.", "anladım", "Oh, I get it — the second step is optional.", "samimi"],
     ["I follow you.", "seni takip ediyorum (anlıyorum)", "Go on, I follow you.", "günlük"],
+    ["I see what you mean.", "ne demek istediğini anlıyorum (katıldığım anlamına gelmez)", "I see what you mean, but I still think it's too early.", "yumuşak"],
   ] },
   { id: "repeat", base: "What?", tr: "ne? (anlamadım)", note: "Duymadığında veya anlamadığında 'What?' yerine kibar seçenekler.", items: [
     ["Sorry, could you repeat that?", "pardon, tekrar eder misiniz?", "Sorry, could you repeat that?", "kibar"],
@@ -148,7 +149,7 @@ export const EVERYDAY = Object.freeze([
     ["Have a good one.", "iyi günler", "Thanks! Have a good one.", "samimi"],
     ["It was nice talking to you.", "seninle konuşmak güzeldi", "It was nice talking to you, Professor.", "kibar"],
   ] },
-  { id: "good", base: "very good", tr: "çok iyi", note: "Very good yerine tek güçlü sıfat: kelime çeşitliliği puanını doğrudan etkiler.", items: [
+  { id: "good", base: "very good", tr: "çok iyi", note: "Very good her yerde doğru; bağlama uyan daha kesin bir sıfat anlamı netleştirir (helpful, impressive, excellent). Zor kelime tek başına puan getirmez; doğru anlamı seç.", items: [
     ["excellent", "mükemmel", "That was an excellent presentation.", "resmî"],
     ["great", "harika", "We had a great time.", "günlük"],
     ["amazing", "inanılmaz", "The view was amazing.", "güçlü"],

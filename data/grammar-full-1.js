@@ -235,7 +235,7 @@ export const FULL_LESSONS_A = {
       pairs: [["the teacher's book", "Öğretmenin sahip olduğu kitap"], ["a teacher's book / a teacher book", "Öğretmenler için hazırlanmış kitap (tür)"], ["the cover of the book", "Kitabın kapağı (cansız, parça)"]],
     },
     mistakes: [
-      ["the table's leg", "the table leg / the leg of the table", "Cansız nesnelerde 's yerine isim + isim veya of daha doğaldır."],
+      ["my brother car", "my brother's car", "Sahibi bir insansa 's gerekir; isim + isim burada yanlış. (Cansızlarda the table leg / the leg of the table daha yaygın; the table's leg yanlış değil, daha az doğal.)"],
       ["a books store", "a bookstore / a book store", "Sınıflayıcı isim tekil kalır."],
       ["the car of my brother", "my brother's car", "Sahip kişi olduğunda 's daha doğaldır."],
     ],

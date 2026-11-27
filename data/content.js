@@ -1,3 +1,6 @@
+import { SET_DATA } from "./sets.js";
+import { BUILD_ITEMS } from "./build.js";
+
 // Original micro-practice content for the personal TOEFL Studio PWA.
 // Task labels follow the post-21 January 2026 TOEFL iBT structure, while every
 // prompt, passage, transcript, option, and model answer below is newly written.
@@ -114,7 +117,7 @@ export const TASK_TYPES = [
   },
 ];
 
-export const exercises = [
+const baseExercises = [
   // Complete the Words — four original passages, ten suffix gaps each.
   {
     id: "cw-01",
@@ -885,7 +888,7 @@ export const exercises = [
       "Alternatif oturum veya yöntem hakkında nazikçe sor",
     ],
     modelAnswer:
-      "Dear Ms. Chen,\n\nI am registered for the food bank volunteer orientation this Tuesday, but an unexpected family obligation means I will not be able to attend. I am still very interested in volunteering and would like to begin as soon as possible. Is there another orientation session later this week, or could I complete the introductory material online? I apologize for the change and appreciate any option you can suggest.\n\nBest regards,\nJordan Lee",
+      "Dear Ms. Chen,\n\nI am registered for the food bank volunteer orientation this Tuesday, but an unexpected family obligation means I will not be able to attend. I am still very interested in volunteering and would like to begin as soon as possible. Is there another orientation session later this week, or could I complete the introductory material online? If neither option is possible, I would be glad to join the next scheduled session instead. I apologize for the change and appreciate any option you can suggest.\n\nBest regards,\nJordan Lee",
     practiceSeconds: 420,
     explanation:
       "Model yanıt amacı ilk cümlede açıklar, gereksiz özel ayrıntıya girmeden neden verir ve iki uygulanabilir alternatif sorar. Ton nazik ve doğrudandır.",
@@ -983,7 +986,7 @@ export const exercises = [
       "Tartışmaya yeni bir katkı yap",
     ],
     modelAnswer:
-      "Universities should generally record lectures, but instructors should be allowed to pause recording during sensitive discussions. Recordings improve access for students who are ill, have disabilities, or need to review complex material in a second language. For example, a student can replay a difficult explanation while checking notes instead of interrupting the class repeatedly. Attendance concerns are real, yet short in-class activities can still reward participation. This approach preserves the value of being present while giving students a reliable study resource.",
+      "Universities should generally record lectures, but instructors should be allowed to pause recording during sensitive discussions. Recordings improve access for students who are ill, have disabilities, or need to review complex material in a second language. For example, a student can replay a difficult explanation while checking notes instead of interrupting the class repeatedly. Attendance concerns are real, yet short in-class activities can still reward participation. This approach preserves the value of being present while giving students a reliable study resource. In my own courses, recordings helped me most before exams, but I still attended class because the discussions were never recorded.",
     practiceSeconds: 600,
     explanation:
       "Yanıt iki uçtan birini seçmek yerine koşullu bir görüş geliştirir; erişim yararını örnekler ve devam kaygısına sınıf içi etkinlikle cevap verir.",
@@ -1007,7 +1010,7 @@ export const exercises = [
       "Özgül bir örnek veya ölçüt kullan",
     ],
     modelAnswer:
-      "The city should prioritize several neighborhood green spaces because frequent access matters more than occasional large events. A small park within walking distance can be used daily by children, older adults, and residents without cars. A central park may support concerts and sports, but those benefits are less evenly distributed if reaching it requires a long trip. The city could design one neighborhood site with a flexible plaza for medium-sized events, preserving some of the central-park advantage while providing everyday access across more districts.",
+      "The city should prioritize several neighborhood green spaces because frequent access matters more than occasional large events. A small park within walking distance can be used daily by children, older adults, and residents without cars. A central park may support concerts and sports, but those benefits are less evenly distributed if reaching it requires a long trip. The city could design one neighborhood site with a flexible plaza for medium-sized events, preserving some of the central-park advantage while providing everyday access across more districts. For example, a small park opened in my neighborhood two years ago, and it is now full every evening with families who would rarely travel across the city to a large one.",
     practiceSeconds: 600,
     explanation:
       "Model görüşünü erişim ölçütüne dayandırır, merkezî parkın etkinlik avantajını kabul eder ve bu avantajı kısmen koruyan karma bir ayrıntı ekler.",
@@ -1031,7 +1034,7 @@ export const exercises = [
       "Önceki yorumları yalnız tekrarlama",
     ],
     modelAnswer:
-      "AI feedback is useful when it functions as a first-pass coach rather than a final authority. Immediate comments can encourage students to revise more often, especially for recurring issues such as unclear references or weak transitions. However, students may accept confident but mistaken advice if the system hides its uncertainty. Courses should therefore require writers to verify major suggestions against a rubric and discuss a sample of disputed comments with an instructor. This design uses speed to expand practice while keeping evaluation and judgment visibly human-led.",
+      "AI feedback is useful when it functions as a first-pass coach rather than a final authority. Immediate comments can encourage students to revise more often, especially for recurring issues such as unclear references or weak transitions. However, students may accept confident but mistaken advice if the system hides its uncertainty. Courses should therefore require writers to verify major suggestions against a rubric and discuss a sample of disputed comments with an instructor. This design uses speed to expand practice while keeping evaluation and judgment visibly human-led. For example, a student could use instant comments on three drafts but bring the two most surprising suggestions to a short meeting with the teacher.",
     practiceSeconds: 600,
     explanation:
       "Yanıt teknolojiyi tamamen kabul veya reddetmek yerine rolünü sınırlar. Hız avantajını korurken rubrik doğrulaması ve öğretmen incelemesiyle hata riskini azaltır.",
@@ -1055,7 +1058,7 @@ export const exercises = [
       "Tartışmaya özgün bir ayrım ekle",
     ],
     modelAnswer:
-      "Public preservation funds can be justified, but only when the public receives an enforceable benefit in return. A grant might require the owner to preserve documented architectural features, allow limited educational access, and repay part of the award if the building is quickly resold for profit. Without such conditions, taxpayers would absorb costs while the owner retained every benefit. Conditional funding recognizes that historic streetscapes contribute to community identity and tourism, yet it also prevents the preservation label from becoming an unrestricted subsidy for private renovation.",
+      "Public preservation funds can be justified, but only when the public receives an enforceable benefit in return. A grant might require the owner to preserve documented architectural features, allow limited educational access, and repay part of the award if the building is quickly resold for profit. Without such conditions, taxpayers would absorb costs while the owner retained every benefit. Conditional funding recognizes that historic streetscapes contribute to community identity and tourism, yet it also prevents the preservation label from becoming an unrestricted subsidy for private renovation. For example, a city could pay to repair a historic theater's facade only if the owner agrees to open the building for school tours twice a year.",
     practiceSeconds: 600,
     explanation:
       "Model, kamusal finansmanı koşullu destekler ve erişim, koruma yükümlülüğü ile geri ödeme gibi denetlenebilir karşılıklar önererek iki görüş arasındaki gerilimi çözer.",
@@ -2143,7 +2146,7 @@ export const exercises = [
       "Diğer görüşlerden birine kısaca değin",
     ],
     modelAnswer:
-      "I think courses should include more group projects, but only if the work of each member is visible. Working in a team teaches skills that individual assignments cannot, such as dividing tasks and solving disagreements. Last term, for example, my group had to prepare a presentation, and I learned a lot from a classmate who organized our schedule. I understand the concern about unfairness. However, instructors can reduce this problem by asking each member to write a short report about their own contribution. With that kind of rule, group projects are both fair and useful.",
+      "I think courses should include more group projects, but only if the work of each member is visible. Working in a team teaches skills that individual assignments cannot, such as dividing tasks and solving disagreements. Last term, for example, my group had to prepare a presentation, and I learned a lot from a classmate who organized our schedule. I understand the concern about unfairness. However, instructors can reduce this problem by asking each member to write a short report about their own contribution. Without such a rule, the most motivated students often end up doing most of the work. With that kind of rule, group projects are both fair and useful.",
     practiceSeconds: 600,
     explanation:
       "Yanıt görüşünü bir koşula bağlar, kişisel bir örnekle destekler ve karşı görüşe somut bir çözümle cevap verir. Cümleler kısa ama bağlaçlarla birbirine bağlıdır.",
@@ -2696,3 +2699,62 @@ export const exercises = [
     tags: ["complete-words", "society", "word-forms"],
   },
 ];
+
+// ── v0.9: exam timing, question sets, Build a Sentence frames ─────────────
+
+/**
+ * Timers follow the official section base times (ETS, test content page, after
+ * January 2026): Reading 30 min / 50 items, Listening 29 min / 47 items,
+ * Writing 23 min / 12 items, Speaking 8 min / 11 items. A task gets its item
+ * count × the section average per item; the email (7 min), the discussion
+ * (10 min) and the interview answer (45 s) have their own limits.
+ */
+export const EXAM_TIMING = Object.freeze({
+  source: "https://www.ets.org/toefl/test-takers/ibt/about/content.html?version=after-jan-2026",
+  perItem: Object.freeze({ reading: 36, listening: 37, "build-sentence": 36 }),
+  fixed: Object.freeze({ email: 420, discussion: 600, "listen-repeat": 12, interview: 45 }),
+  note: "ETS temel süreleri: Reading 30 dk / 50 madde, Listening 29 dk / 47 madde, Writing 23 dk / 12 madde, Speaking 8 dk / 11 madde. Görev süresi = madde sayısı × bölüm ortalaması (Reading 36 sn, Listening 37 sn ses dahil, Build a Sentence 36 sn). E-posta 7 dk, tartışma 10 dk, mülakat cevabı 45 sn. Uyarlamalı sınavda süre biraz değişebilir.",
+});
+
+/** Seconds for one task under exam timing. */
+export function examSeconds(item) {
+  if (!item) return 120;
+  const fixed = EXAM_TIMING.fixed[item.taskType];
+  if (fixed) return fixed;
+  const per = EXAM_TIMING.perItem[item.taskType] ?? EXAM_TIMING.perItem[item.skill] ?? 36;
+  const count = item.questions?.length ?? item.gaps?.length ?? 1;
+  return per * count;
+}
+
+// A text or recording with its own question set (2–3 for daily texts, 5 for academic passages,
+// 2 for conversations and announcements, 4 for academic talks), each option explained.
+function applySet(item) {
+  const extra = SET_DATA[item.id];
+  if (!extra) return item;
+  // A rewritten option list (v0.9, F12) replaces options that were easy to rule out.
+  const first = { prompt: item.prompt, options: extra.options ?? item.options, answer: extra.answer ?? item.answer, explanation: item.explanation, why: extra.why, focus: extra.focus };
+  const questions = [first, ...extra.more].map((q) => ({ ...q, options: q.options.slice() }));
+  const { options, answer, ...rest } = item;
+  return {
+    ...rest,
+    type: "set",
+    prompt: item.skill === "reading" ? "Read the text and answer the questions." : "Listen, then answer the questions.",
+    passage: item.passage ? `${item.passage}${extra.passageAdd ? ` ${extra.passageAdd}` : ""}` : undefined,
+    audioText: item.audioText ? `${extra.audio ?? item.audioText}${extra.audioAdd ? ` ${extra.audioAdd}` : ""}` : undefined,
+    questions,
+    estimatedMinutes: Math.max(item.estimatedMinutes ?? 2, Math.ceil(questions.length * 0.7)),
+    ...(extra.measure ? { measure: true } : {}),
+  };
+}
+
+function applyChoice(item) {
+  const extra = SET_DATA[item.id];
+  return extra?.why ? { ...item, options: extra.options ?? item.options, answer: extra.answer ?? item.answer, why: extra.why, focus: extra.focus } : item;
+}
+
+export const exercises = Object.freeze([
+  ...baseExercises
+    .filter((item) => item.taskType !== "build-sentence")
+    .map((item) => (item.type === "mcq" && item.taskType !== "choose-response" ? applySet(item) : item.type === "mcq" ? applyChoice(item) : item)),
+  ...BUILD_ITEMS,
+]);

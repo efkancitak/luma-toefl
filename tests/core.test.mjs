@@ -22,7 +22,10 @@ test("createState uses the caller's local calendar date and isolated collections
     startDate: "2026-11-15",
     targetBand: "",
     planEnd: "",
+    extras: false,
   });
+  assert.deepEqual(state.fills, {});
+  assert.deepEqual(state.transfers, []);
   assert.equal(state.schemaVersion, 1);
   assert.deepEqual(state.attempts, []);
   assert.deepEqual(state.reviews, {});

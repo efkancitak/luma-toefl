@@ -108,11 +108,14 @@ test("every interview model answer is annotated in four steps at a 45-second pac
 
 test("the speaking guide covers scoring, pace, openers, ways to expand and delivery", () => {
   assert.equal(SPEAKING_GUIDE.scoring.length, 4);
-  assert.match(SPEAKING_GUIDE.pace, /110/);
+  // v0.9: no word-count target; the guide explains why (F19).
+  assert.doesNotMatch(SPEAKING_GUIDE.pace, /110/);
+  assert.match(SPEAKING_GUIDE.pace, /kelime sayısı belirtmez/u);
   assert.ok(SPEAKING_GUIDE.openers.length >= 3);
   assert.equal(SPEAKING_GUIDE.expand.length, 3);
   assert.ok(SPEAKING_GUIDE.expand.some(([, text]) => /mixed feelings/.test(text)));
-  assert.ok(SPEAKING_GUIDE.delivery.some((line) => /alçalt/.test(line)), "lower intonation at the end of sentences");
+  assert.ok(SPEAKING_GUIDE.delivery.some((line) => /anlama göre/u.test(line)), "intonation follows meaning, not punctuation");
+  assert.ok(!SPEAKING_GUIDE.delivery.some((line) => /virgülden önce/u.test(line)), "no rule tied to commas");
 });
 
 test("the phrase bank includes the high-value speaking phrases", () => {

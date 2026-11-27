@@ -10,10 +10,12 @@ import { PHRASES } from "../data/speaking.js";
 
 // ── Vocabulary deck ────────────────────────────────────────────────────────
 
-test("the deck holds over a thousand unique B1–C2 words, more at each level up to B2", () => {
+test("the deck holds over a thousand unique A2–C2 words, more at each level up to B2", () => {
   assert.ok(DECK.length >= 1100, `${DECK.length} cards`);
-  assert.deepEqual(LEVEL_ORDER, ["B1", "B2", "C1", "C2"]);
-  assert.ok(!DECK.some((card) => card.level === "A1" || card.level === "A2"), "no A1–A2 cards in the study deck");
+  // v0.9: A2 is back at the learner's request; A1 stays out.
+  assert.deepEqual(LEVEL_ORDER, ["A2", "B1", "B2", "C1", "C2"]);
+  assert.ok(!DECK.some((card) => card.level === "A1"), "no A1 cards in the study deck");
+  assert.ok(DECK.filter((card) => card.level === "A2").length >= 100, "an A2 deck");
   const count = Object.fromEntries(LEVEL_ORDER.map((level) => [level, DECK.filter((card) => card.level === level).length]));
   assert.ok(count.B1 >= 250 && count.B2 >= 350 && count.C1 >= 280 && count.C2 >= 140, JSON.stringify(count));
   assert.ok(count.B1 < count.B2, JSON.stringify(count));

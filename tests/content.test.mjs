@@ -8,13 +8,14 @@ const SKILLS = ["listening", "reading", "speaking", "writing"];
 const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
 const TASK_CONTRACT = new Map([
   ["complete-words", { skill: "reading", type: "gaps" }],
-  ["daily-reading", { skill: "reading", type: "mcq" }],
-  ["academic-reading", { skill: "reading", type: "mcq" }],
+  // v0.9: texts and recordings carry question sets; Build a Sentence uses an answer frame.
+  ["daily-reading", { skill: "reading", type: "set" }],
+  ["academic-reading", { skill: "reading", type: "set" }],
   ["choose-response", { skill: "listening", type: "mcq" }],
-  ["conversation", { skill: "listening", type: "mcq" }],
-  ["announcement", { skill: "listening", type: "mcq" }],
-  ["academic-talk", { skill: "listening", type: "mcq" }],
-  ["build-sentence", { skill: "writing", type: "order" }],
+  ["conversation", { skill: "listening", type: "set" }],
+  ["announcement", { skill: "listening", type: "set" }],
+  ["academic-talk", { skill: "listening", type: "set" }],
+  ["build-sentence", { skill: "writing", type: "build" }],
   ["email", { skill: "writing", type: "writing" }],
   ["discussion", { skill: "writing", type: "writing" }],
   ["listen-repeat", { skill: "speaking", type: "speaking" }],
@@ -204,15 +205,17 @@ test("gap exercises have ten unique matching placeholders and reconstruct full w
   }
 });
 
-test("sentence-order tokens have the same punctuation-neutral multiset as the answer", () => {
-  const items = exercises.filter((item) => item.type === "order");
-  assert.ok(items.length > 0, "the exercise bank unexpectedly has no order tasks");
+test("Build a Sentence frames: fixed words plus the right tiles rebuild the answer, and one tile is extra", () => {
+  const items = exercises.filter((item) => item.type === "build");
+  assert.ok(items.length >= 20, "two 10-item rehearsals need at least 20 items");
 
   for (const item of items) {
     assert.ok(Array.isArray(item.tokens) && item.tokens.length > 0, `${item.id}.tokens must be populated`);
     assertNonEmptyString(item.answer, `${item.id}.answer`);
+    assertNonEmptyString(item.context, `${item.id}.context`);
+    assert.equal(item.tokens.length, item.solution.length + 1, `${item.id} has exactly one extra tile`);
 
-    const suppliedTokens = item.tokens.flatMap(lexicalTokens);
+    const suppliedTokens = [...item.slots.filter((slot) => slot !== null), ...item.solution].flatMap(lexicalTokens);
     const answerTokens = lexicalTokens(item.answer);
     assert.deepEqual(
       tokenMultiset(suppliedTokens),

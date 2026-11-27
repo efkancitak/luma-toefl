@@ -50,7 +50,7 @@ export const GRAMMAR_REFS = Object.freeze([
   {
     id: "conditionals",
     title: "Bütün koşul cümleleri",
-    intro: "if'li tarafta will ve would kullanılmaz. if cümlesi başta ise virgül konur: If it rains, … / … if it rains.",
+    intro: "Gelecekteki bir koşulda if tarafında will kullanılmaz: If it rains (If it will rain değil). İstisna: istek ve nezaket anlamı (If you will wait here, I'll call her. / If you would like to join, …). if cümlesi başta ise virgül konur: If it rains, … / … if it rains.",
     head: ["Tür", "if tarafı", "Ana cümle", "Anlam", "Örnek"],
     rows: [
       ["Zero", "present simple", "present simple", "her zaman doğru, genel kural", "If you heat ice, it melts."],

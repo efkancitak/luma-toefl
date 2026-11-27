@@ -278,6 +278,7 @@ test("the bank holds at least eight items for every answer-keyed task and every 
 });
 
 test("every sentence-order item has exactly one token sequence that rebuilds its answer", () => {
+  // v0.9: Build a Sentence moved to answer frames (tests/v9.test.mjs checks those); grammar order items stay here.
   for (const item of exercises.filter((entry) => entry.type === "order")) {
     const target = item.answer.replace(/[.!?]+$/u, "").toLowerCase();
     // Two identical tokens (e.g. "the" twice) are the same sentence, so sequences are compared as text.

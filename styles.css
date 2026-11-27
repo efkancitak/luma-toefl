@@ -558,3 +558,31 @@ mark.d-del{background:var(--bad-soft);color:var(--bad-dark);text-decoration:line
 .tone.kibar{background:#e8f0ff;color:#1d4fc4}.tone.resmî{background:#f0eaff;color:#5b36c9}.tone.günlük{background:#e9f7ef;color:#13854a}.tone.samimi{background:#fff1df;color:#a55600}.tone.güçlü{background:#ffe8f0;color:#b0275b}.tone.yumuşak{background:#f2f4f7;color:#4a5568}
 .everyday-group summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;min-height:44px}
 .everyday-group summary strong{font-size:17px}
+
+/* ── v0.9: exam timing, question sets, Build a Sentence, typed completion ── */
+.criterion.check{border-color:#d6dbe4;background:#fbfcfe}.status-pill.check{background:#eef1f6;color:#3d4a5c}
+.timer.over{background:var(--bad-soft);color:var(--bad-dark)}
+.option.faded{opacity:.35;text-decoration:line-through}
+.set-questions{display:grid;gap:18px;margin:10px 0}
+.set-q{border:2px solid var(--line);border-radius:18px;padding:14px 16px;background:#fff}
+.set-q .quiz-options{margin:12px 0 4px}
+.set-q-head{font-weight:700;line-height:1.6}.q-num{display:inline-block;font-size:12px;font-weight:900;color:var(--muted);margin-right:6px;font-variant-numeric:tabular-nums}
+.q-feedback{border-radius:12px;padding:10px 12px;margin-top:8px;font-size:14px;line-height:1.6;display:grid;gap:4px}
+.q-feedback.ok{background:var(--ok-soft)}.q-feedback.no{background:var(--bad-soft)}
+.q-feedback .tag{justify-self:start}
+.bs-dialog{display:grid;gap:10px;margin:18px 0}
+.bs-line{display:flex;gap:10px;align-items:flex-start;font-size:17px;line-height:1.7}
+.bs-line .speaker{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;background:#eef1f6;color:#3d4a5c;margin-top:2px}
+.bs-line.answer .speaker{background:var(--primary-soft);color:var(--primary-dark)}
+.bs-frame{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fixed-word{padding:6px 2px}
+.blank-slot{display:inline-block;min-width:70px;height:40px;border-bottom:3px solid var(--line);border-radius:4px}
+.transfer-card{border-color:#f3d7a6;background:#fffaf1;margin:14px 0}
+.transfer-result{margin-top:10px;font-size:14px}
+.fill-card{text-align:left}
+.fill-sentence{font-size:20px;line-height:2.1;margin:14px 0}
+.fill-sentence .gap-input{width:calc(var(--n,4)*1.05em + 18px);min-width:44px;max-width:100%}
+.why-card summary{font-weight:700}
+.extra-pool{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px}
+.extra-pool>div{display:grid;gap:2px;min-width:0}
+@media (max-width:520px){.extra-pool{flex-direction:column;align-items:stretch}.bs-line{font-size:16px}.fill-sentence{font-size:18px}}

@@ -15,8 +15,8 @@ import { PROMPTS } from "../data/speaking.js";
 
 // ── Daily plan ─────────────────────────────────────────────────────────────
 
-test("the plan ends a month before the exam by default and counts today", () => {
-  assert.equal(defaultPlanEnd("2027-01-15"), "2026-12-15");
+test("the plan runs to the exam date by default (v0.9) and counts today", () => {
+  assert.equal(defaultPlanEnd("2027-01-15"), "2027-01-15");
   assert.equal(planDaysLeft("2026-12-15", "2027-01-15", new Date(2026, 10, 26, 9)), 20);
   assert.equal(planDaysLeft("2026-12-15", "2027-01-15", new Date(2026, 11, 15, 23)), 1);
   // Past the end date the rest is spread until the day before the exam.
@@ -279,7 +279,7 @@ test("the grammar program runs A1 → C2 over every lesson, with reference table
   const { GRAMMAR_REFS } = await import("../data/grammar-ref.js");
   const rank = { A1: 0, A2: 1, B1: 2, B2: 3, C1: 4, C2: 5 };
   const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
-  assert.match(app, /const lessons=PROGRAM;/u, "the daily plan follows the program order");
+  assert.match(app, /left:PROGRAM\.filter\(/u, "the daily plan follows the program order");
   const ordered = [...LESSONS].sort((a, b) => rank[a.level.split(/[–-]/u)[0]] - rank[b.level.split(/[–-]/u)[0]]);
   assert.equal(ordered[0].level.slice(0, 2), "A1");
   assert.equal(ordered.at(-1).level.slice(0, 2), "C2");

@@ -169,9 +169,9 @@ export const SPEAKING_GUIDE = Object.freeze({
     ["Konuya cevap ve geliştirme", "Soruya doğrudan cevap veriyor ve fikri açıklama ile örnekle geliştiriyor musun? Sadece sorunun kelimelerini tekrar etmek düşük puan alır."],
     ["Akıcılık ve hız", "Doğal bir konuşma hızı ve yerinde duraklar. Sık ve uzun duraklar, çok fazla “eee” puanı düşürür."],
     ["Anlaşılırlık", "Telaffuz, ritim ve tonlama anlamı rahat aktarıyor mu? Hızlı ama anlaşılmayan konuşma işe yaramaz."],
-    ["Dil kullanımı", "Doğru ve çeşitli dil bilgisi ve kelime; cümleler arası bağlaçlar. 5 ile 4 arasındaki fark çoğu zaman bağlaçlardır."],
+    ["Dil kullanımı", "Doğru ve çeşitli dil bilgisi ve kelime. Bağlaçlar fikirler arasındaki ilişkiyi (neden, karşıtlık, sonuç) kurdukları için önemlidir; sayıları değil, doğru ilişkiyi kurmaları puanı etkiler."],
   ],
-  pace: "Akıcı bir cevap 45 saniyede yaklaşık 110 kelime ve üzeridir (saniyede 2–2,5 kelime). Bu, hazırlık kaynaklarının pratik hedefidir; ETS kelime sayısı belirtmez. Kendi cevabını dikteyle yazıya döküp kelimeleri sayarak ölç.",
+  pace: "ETS bir kelime sayısı belirtmez. Rubrik doğal bir akış, anlaşılırlık ve gelişmiş bir cevap ister: soruya doğrudan cevap, bir gerekçe, somut bir ayrıntı ve 45 saniyede rahatça bitirmek. Kısa ama net ve gelişmiş bir cevap, aceleyle söylenmiş uzun bir cevaptan iyidir. Dolgu ve tekrarla uzatma. Dikte sayısı yalnız bilgi verir.",
   scenario: "Interview görevinde genellikle bir araştırmaya katılan öğrencisin; araştırmacı deneyimini, alışkanlığını, bir varsayımı ve görüşünü sorar. Soruları kampüs, eğitim, teknoloji ve toplum gibi tanıdık konulardan gelir.",
   openers: [
     "That's a tough choice, but I'd probably …",
@@ -186,7 +186,8 @@ export const SPEAKING_GUIDE = Object.freeze({
     ["Karışık duygular", "İki tarafı da anlat: “Well, to be honest, I have mixed feelings about this question. On the one hand, … On the other hand, …” Sonda iki tarafı da kabul edebilirsin."],
   ],
   delivery: [
-    "Cümle sonlarında ve virgülden önce sesini alçalt; bu, cümleyi bitirdiğini ve emin olduğunu gösterir.",
+    "Tonlama noktalamaya değil, anlama göre değişir: bir fikri bitirirken ses genelde düşer (I prefer the library.); devam edeceğini gösterirken düz kalır veya hafifçe yükselir (If I have time, …); emin olmadığında veya evet/hayır sorarken yükselebilir (Really?). Aynı cümle farklı tonla farklı anlam taşır: 'You're coming.' (bilgi) / 'You're coming?' (şaşkınlık).",
+    "Vurguyu en önemli kelimeye koy: I didn't say SHE took it (başkası aldı) / I didn't say she TOOK it (aldığını değil, ödünç aldığını).",
     "Anlam öbekleri arasında kısa dur, kelimelerin arasında değil.",
     "Kelimelerden çok doğal kalıplarla düşün: “The main reason is that …”, “That experience taught me that …”. Kalıp hazırsa beynin içeriğe odaklanır.",
     "Basit tut: 4 adım, her adımda 1–3 cümle. Karmaşık cümle kurup yarıda kalmaktan iyidir.",
